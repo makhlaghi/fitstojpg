@@ -43,19 +43,19 @@ conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.h
 
 In short the options are:
 
-   -h: View help.
-   -l: Logarithmic scaling.
-   -n: Don't inverse grayscale.
+* `-h`: View help.
+* `-l`: Logarithmic scaling.
+* `-n`: Don't inverse grayscale.
        (by default it is for easier printing and viewing.)
-   -i: Input FITS filename.
-   -e: Input FITS extention.
-   -o: Output JPEG name.
-   -w: Width in print in centimeters.
-   -c: Color space (grayscale or CMYK).
-   -a: Lower truncation radius.
-   -b: Higher truncation radius.
-   -f: Width of black inner border in pixels.
-   -g: Width of white outer border in pixels.
+* `-i`: Input FITS filename.
+* `-e`: Input FITS extention.
+* `-o`: Output JPEG name.
+* `-w`: Width in print in centimeters.
+* `-c`: Color space (grayscale or CMYK).
+* `-a`: Lower truncation radius.
+* `-b`: Higher truncation radius.
+* `-f`: Width of black inner border in pixels.
+* `-g`: Width of white outer border in pixels.
 
 Future updates and issues:
 ------------
