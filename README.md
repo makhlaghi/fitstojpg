@@ -3,13 +3,17 @@ fits2jpg
 
 Convert a FITS image to a grayscale or CMYK JPEG image.
 
+Note: CMYK doesn't give a good ouput yet, I will fix it as soon as I can.
+
 Description:
 ------------
 
-The FITS image standard is the standard used by astronomers to archive
-and use astronomical data. This package converts images saved in that
-format into gray scale or CMYK (with only the black channel being
-active) JPEG format images. 
+The [FITS image
+standard](https://heasarc.gsfc.nasa.gov/docs/heasarc/fits.html) is the
+standard used by astronomers to archive and use astronomical
+data. This package converts images saved in that format into gray
+scale or CMYK (with only the black channel being active) JPEG format
+images.
 
 
 Prerequisits:
@@ -20,7 +24,9 @@ machine, installing them is easy and straightforward.
 - [IJG's libjpeg](http://www.ijg.org/), which should already be
   installed  on your system.
 - [cfitsio](http://heasarc.nasa.gov/fitsio/fitsio.html) For
-  reading and writing FITS files.
+  reading and writing FITS files. I have explained [how to install
+  `cfitsio` here](http://www.astr.tohoku.ac.jp/~akhlaghi/cfitsiowcslibinstall.html)
+
 
 Installing and running:
 ------------
@@ -35,13 +41,29 @@ and an configuration file will also be provided for user
 customization. The [POSIX argument syntax
 conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax) apply.
 
+In short the options are:
 
-Future updates:
+   -h: View help.
+   -l: Logarithmic scaling.
+   -n: Don't inverse grayscale.
+       (by default it is for easier printing and viewing.)
+   -i: Input FITS filename.
+   -e: Input FITS extention.
+   -o: Output JPEG name.
+   -w: Width in print in centimeters.
+   -c: Color space (grayscale or CMYK).
+   -a: Lower truncation radius.
+   -b: Higher truncation radius.
+   -f: Width of black inner border in pixels.
+   -g: Width of white outer border in pixels.
+
+Future updates and issues:
 ------------
-0. Make a nice documentation.
-1. Add more functionality.
-2. Work on a better user experience.
-3. Fix any bugs I have not found yet!
+0. The CMYK output is not yet correct!
+1. Make a nice documentation.
+2. Add much more functionality and generality.
+3. Work on a better user experience.
+4. Fix any bugs I have not found yet!
 
 Comments and suggestions:
 ----------------------------------------

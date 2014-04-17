@@ -44,14 +44,17 @@ setdefaultoptions(struct a2jparams *p)
   p->log=0;
   p->inv=1;   /* Invert greyscale image by default. */
 
-  p->inname="b.fits";
+  p->inname="a.fits";
   p->outname="a.jpg";
   p->color='g';
   p->ext=0;
   p->width=5.0f;
   p->low=0.0f;
   p->high=0.0f;
+  p->ibord=1;
+  p->obord=1;
 }
+
 
 
 
@@ -175,6 +178,13 @@ printhelp(struct a2jparams *p)
   printf("\tIf equal to lower, no truncation.\n");
   printf("\tdefault: %f\n\n", p->high);
 
+  printf(" -f INTEGER:\n\tInner border width\n");
+  printf("\tdefault: %d\n\n", p->ibord);
+
+  printf(" -g INTEGER:\n\tOuter border width\n");
+  printf("\tdefault: %d\n\n", p->obord);
+
+
   exit(EXIT_SUCCESS);
 }
 
@@ -190,7 +200,7 @@ getsaveoptions(struct a2jparams *p,
   int c;
   char *tailptr;
 
-  while( (c=getopt(argc, argv, "lhnc:e:o:i:w:a:b:")) != -1 )
+  while( (c=getopt(argc, argv, "lhnc:e:o:i:w:a:b:f:g:")) != -1 )
     switch(c)
       {
 	/* Options with no arguments: */
@@ -230,6 +240,12 @@ getsaveoptions(struct a2jparams *p,
 	break;
       case 'e':			/* Extension of the FITS image. */
 	checkint(optarg, &p->ext, c);
+	break;
+      case 'f':			/* Inner border. */
+	checkint(optarg, &p->ibord, c);
+	break;
+      case 'g':			/* Outer border. */
+	checkint(optarg, &p->obord, c);
 	break;
       case '?':
 	fprintf(stderr, "Unknown option: '-%c'.\n\n", optopt);

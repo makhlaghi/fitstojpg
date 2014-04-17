@@ -33,7 +33,9 @@ struct a2jparams
   float low;			/* Lower pixel value trunctation. */
   float high;			/* Higher pixel value truncation. */
   float log;			/* Logarithmic or not. */
-  float inv;
+  float inv;			/* Inverse grayscale image. */
+  int ibord;		        /* Inner border (black) width. */
+  int obord;	        	/* Outer border (White) width. */
 };
 
 void
