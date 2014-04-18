@@ -180,11 +180,13 @@ floatfilljsarr(JSAMPLE *jsr, float *arr, size_t size, char color,
 	  jsr[i]=(arr[i]-min)*m;
     }
   else
-    for(i=0;i<size;i++)
-      {
-	jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;
-	jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=0;
-      }
+    {
+      for(i=0;i<size;i++)
+	{
+	  jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;
+	  jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=0;
+	}
+    }
 }
 
 
@@ -197,12 +199,14 @@ floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
 		 struct a2jparams *p)
 {
   double m;
+  size_t ib, ob;
   float min, max;
-  size_t ib, ob, c;
   size_t i, j, start, o, ns0, ns1;
 
   fminmax(arr, s0*s1, &min, &max);
   m=(double)UCHAR_MAX/((double)max-(double)min);
+
+  assert(min<max);		/* Might go crazy sometimes! */
 
   ib=p->ibord;
   ob=p->obord;
@@ -212,7 +216,6 @@ floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
 
   if(p->color=='g')
     {
-      c=0;			/* For grayscale. */
       if(p->inv)
 	for(i=0;i<s0;i++)
 	  for(j=0;j<s1;j++)
@@ -221,10 +224,15 @@ floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
 	for(i=0;i<s0;i++)
 	  for(j=0;j<s1;j++)
 	    jsr[(i+o)*ns1+j+o]=(arr[i*s1+j]-min)*m;
+
+      if(ob==0) return;
+      for(i=0;i<ns0;i++)
+	for(j=0;j<ns1;j++)
+	    if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob) 
+	      jsr[i*ns1+j]=UCHAR_MAX;
     }
   else
     {
-      c=3;			/* For CMYK. */
       for(i=0;i<s0;i++)
 	for(j=0;j<s1;j++)    
 	  {
@@ -232,15 +240,13 @@ floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
 	    jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;
 	    jsr[start]=jsr[start+1]=jsr[start+2]=0;
 	  }
-    }
 
-  if(ob==0) return;
-  for(i=0;i<ns0;i++)
-    for(j=0;j<ns1;j++)
-      {
-	if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob) 
-	  jsr[i*ns1+j+c]=UCHAR_MAX;
-      }
+      if(ob==0) return;
+      for(i=0;i<ns0;i++)
+	for(j=0;j<ns1;j++)
+	    if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob) 
+	      jsr[(i*ns1+j)*4+3]=UCHAR_MAX;
+    }
 }
 
 
@@ -251,10 +257,14 @@ floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
 void
 float2jpg(float *arr, size_t s0, size_t s1, struct a2jparams *p)
 {
+  /*size_t i;*/
   JSAMPLE *a;
 
   assert(p->color=='c' || p->color=='g');
-
+  /*
+  for(i=0;i<s0*s1;i++)
+    arr[i]=i;
+  */
   makejsample(&a, s0, s1, p);
   
   if(p->ibord==0 && p->obord==0)

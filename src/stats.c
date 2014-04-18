@@ -47,13 +47,14 @@ floatmin(float *in, size_t size, float *min)
 void
 fminmax(float *in, size_t size, float *min, float *max)
 {
-  float tmin=MAXFD, tmax=MINFD, *pt=in, *fpt;
+  float tmin=MAXFD, tmax=MINFD, *fpt;
   fpt=in+size;
-  for(;pt<fpt;pt++) 
+  do
     {
-      if(*pt>tmax) tmax=*pt;
-      else if(*pt<tmin) tmin=*pt;
+      if(*in>tmax) tmax=*in;
+      if(*in<tmin) tmin=*in;
     }
+  while (++in<fpt);
   *max=tmax;    
   *min=tmin;    
 }

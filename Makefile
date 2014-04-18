@@ -9,9 +9,9 @@ CC=gcc
 CFLAGS=-Wall -W -O -pedantic -I$(src)
 LDLIBS=-lcfitsio -pthread -ljpeg -lm
 
-mockgals: $(objects) 
+fits2jpg: $(objects) 
 	@$(CC) -o fits2jpg $(objects) $(LDLIBS) 
 	@rm *.o
-	./fits2jpg -cc
+#	./fits2jpg -cc
 
 .SILENT: $(objects)
