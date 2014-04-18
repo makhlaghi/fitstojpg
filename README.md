@@ -3,7 +3,7 @@ fits2jpg
 
 Convert a FITS image to a grayscale or CMYK JPEG image.
 
-Note: CMYK doesn't give a good ouput yet, I will fix it as soon as I can.
+Note: CMYK colors are still faulty, I will fix it as soon as possible.
 
 Description:
 ------------
@@ -13,7 +13,8 @@ standard](https://heasarc.gsfc.nasa.gov/docs/heasarc/fits.html) is the
 standard used by astronomers to archive and use astronomical
 data. This package converts images saved in that format into gray
 scale or CMYK (with only the black channel being active) JPEG format
-images.
+images. The resolution of the output JPEG image is identical to the 
+input image.
 
 
 Prerequisits:
@@ -32,14 +33,17 @@ Installing and running:
 ------------
  
 To install this `fits2jpg`, after downloading or cloning it, all you
-have to do is to run `make` in the downloaded directory.  Some command
-line options can be given so you can customize the output, to learn
-them, run `./fits2jpg -h`.  A full list of all the options will be
-provided, nealy all the operation of `fits2jpg` can be defined by
-these input options and their arguments. In the future long arguments
-and an configuration file will also be provided for user
-customization. The [POSIX argument syntax
-conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax) apply.
+have to do is to run `make` in the downloaded directory. In order to
+be able to run `fits2jpg` from anywhere on your system, run `make
+install` as root after the installation finishes.
+
+Some command line options can be given so you can customize the
+output, to learn them, run `./fits2jpg -h`.  A full list of all the
+options with some explanation will be provided, nealy all the
+operation of `fits2jpg` can be defined by these input options and
+their arguments.  The [POSIX argument syntax
+conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax)
+apply.
 
 In short the options are:
 

@@ -12,6 +12,11 @@ LDLIBS=-lcfitsio -pthread -ljpeg -lm
 fits2jpg: $(objects) 
 	@$(CC) -o fits2jpg $(objects) $(LDLIBS) 
 	@rm *.o
-#	./fits2jpg -cc
+#	./fits2jpg
 
 .SILENT: $(objects)
+
+.PHONY: install
+
+install:
+	cp ./fits2jpg /usr/local/bin/

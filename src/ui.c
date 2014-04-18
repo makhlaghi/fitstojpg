@@ -139,7 +139,11 @@ checkint(char *optarg, int *var, int opt)
 void
 printhelp(struct a2jparams *p)
 {
-  printf("\n\nThis is fits2jpg 0.1:\n\n\n");
+  printf("\n\nfits2jpg 0.1  Copyright (C) 2013  Mohammad Akhlaghi\n");
+  printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
+  printf("This is free software, and you are welcome to\n");
+  printf("redistribute it under the\n");
+  printf("GNU Public License v3 or later.\n\n\n");
 
   printf("####### Options without arguments (On or Off):\n");
   printf("By default all are off\n");

@@ -183,7 +183,7 @@ floatfilljsarr(JSAMPLE *jsr, float *arr, size_t size, char color,
     {
       for(i=0;i<size;i++)
 	{
-	  jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;
+	  jsr[i*4+3]=(arr[i]-min)*m;
 	  jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=0;
 	}
     }
@@ -237,7 +237,7 @@ floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
 	for(j=0;j<s1;j++)    
 	  {
 	    start=((i+o)*ns1+j+o)*4;
-	    jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;
+	    jsr[start+3]=(arr[i*s1+j]-min)*m;
 	    jsr[start]=jsr[start+1]=jsr[start+2]=0;
 	  }
 
