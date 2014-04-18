@@ -32,7 +32,9 @@ along with fits2jpg. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-
+/*************************************************************
+ ***********           Make JSAMPLE array.         ***********
+ *************************************************************/
 void
 makejsample(JSAMPLE **a, size_t s0, size_t s1, struct a2jparams *p)
 {
@@ -62,115 +64,33 @@ makejsample(JSAMPLE **a, size_t s0, size_t s1, struct a2jparams *p)
 
 
 
-/* Fill the JSAMPLE array with no border. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*************************************************************
+ ***********      Write JSAMPLE array to JPEG      ***********
+ *************************************************************/
 void
-floatfilljsarr(JSAMPLE *jsr, float *arr, size_t size, char color,
-	       int inv)
+writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a, 
+		   size_t s0, size_t s1)
 {
-  size_t i;
-  double m;
-  float min, max;
-
-  fminmax(arr, size, &min, &max);
-  m=(double)UCHAR_MAX/((double)max-(double)min);
-
-  if(color=='g')
-    {
-      if(inv)
-	for(i=0;i<size;i++)
-	  jsr[i]=UCHAR_MAX-(arr[i]-min)*m;
-      else
-	for(i=0;i<size;i++)
-	  jsr[i]=(arr[i]-min)*m;
-    }
-  else
-    for(i=0;i<size;i++)
-      {
-	jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;
-	jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=0;
-      }
-}
-
-
-
-
-
-/* Fill the JSAMPLE array, leaving space for a border. */
-void
-floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1, 
-		 struct a2jparams *p)
-{
-  double m;
-  size_t ib, ob;
-  float min, max;
-  size_t i, j, start, o, ns0, ns1;
-
-  fminmax(arr, s0*s1, &min, &max);
-  m=(double)UCHAR_MAX/((double)max-(double)min);
-
-  ib=p->ibord;
-  ob=p->obord;
-  o=ib+ob;
-  ns0=s0+2*o;
-  ns1=s1+2*o;
-
-  if(p->color=='g')
-    {
-      if(p->inv)
-	for(i=0;i<s0;i++)
-	  for(j=0;j<s1;j++)
-	    jsr[(i+o)*ns1+j+o]=UCHAR_MAX-(arr[i*s1+j]-min)*m;
-      else
-	for(i=0;i<s0;i++)
-	  for(j=0;j<s1;j++)
-	    jsr[(i+o)*ns1+j+o]=(arr[i*s1+j]-min)*m;
-    }
-  else
-    for(i=0;i<s0;i++)
-      for(j=0;j<s1;j++)    
-      {
-	start=((i+o)*ns1+j+o)*4;
-	jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;
-	jsr[start]=jsr[start+1]=jsr[start+2]=0;
-      }
-
-  if(ob==0) return;
-
-  for(i=0;i<ns0;i++)
-    for(j=0;j<ns1;j++)
-      {
-	if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob) 
-	  jsr[i*ns1+j]=UCHAR_MAX;
-      }
-}
-
-
-
-
-
-/* Save a float array into a JPEG image. */
-void
-float2jpg(float *arr, size_t s0, size_t s1, struct a2jparams *p)
-{
-  JSAMPLE *a;
   JSAMPROW r[1];
   FILE * outfile;
   int row_stride, c;
   struct jpeg_error_mgr jerr;
   struct jpeg_compress_struct cinfo;
-
-  assert(p->color=='c' || p->color=='g');
-
-  makejsample(&a, s0, s1, p);
-  
-  if(p->ibord==0 && p->obord==0)
-    floatfilljsarr(a, arr, s0*s1, p->color, p->inv);
-  else
-    {
-      floatfilljsarr_wbord(a, arr, s0, s1, p);
-      s0+=2*(p->ibord+p->obord);
-      s1+=2*(p->ibord+p->obord);
-    }
 
   /* Begin the JPEG writing, following libjpeg's example.c  */
   cinfo.err = jpeg_std_error(&jerr);
@@ -214,5 +134,139 @@ float2jpg(float *arr, size_t s0, size_t s1, struct a2jparams *p)
   jpeg_finish_compress(&cinfo);
   fclose(outfile);
   jpeg_destroy_compress(&cinfo);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*************************************************************
+ ***********       Prepare input FLOAT array       ***********
+ *************************************************************/
+/* Fill the JSAMPLE array with no border. */
+void
+floatfilljsarr(JSAMPLE *jsr, float *arr, size_t size, char color,
+	       int inv)
+{
+  size_t i;
+  double m;
+  float min, max;
+
+  fminmax(arr, size, &min, &max);
+  m=(double)UCHAR_MAX/((double)max-(double)min);
+
+  if(color=='g')
+    {
+      if(inv)
+	for(i=0;i<size;i++)
+	  jsr[i]=UCHAR_MAX-(arr[i]-min)*m;
+      else
+	for(i=0;i<size;i++)
+	  jsr[i]=(arr[i]-min)*m;
+    }
+  else
+    for(i=0;i<size;i++)
+      {
+	jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;
+	jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=0;
+      }
+}
+
+
+
+
+
+/* Fill the JSAMPLE array, leaving space for a border. */
+void
+floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1, 
+		 struct a2jparams *p)
+{
+  double m;
+  float min, max;
+  size_t ib, ob, c;
+  size_t i, j, start, o, ns0, ns1;
+
+  fminmax(arr, s0*s1, &min, &max);
+  m=(double)UCHAR_MAX/((double)max-(double)min);
+
+  ib=p->ibord;
+  ob=p->obord;
+  o=ib+ob;
+  ns0=s0+2*o;
+  ns1=s1+2*o;
+
+  if(p->color=='g')
+    {
+      c=0;			/* For grayscale. */
+      if(p->inv)
+	for(i=0;i<s0;i++)
+	  for(j=0;j<s1;j++)
+	    jsr[(i+o)*ns1+j+o]=UCHAR_MAX-(arr[i*s1+j]-min)*m;
+      else
+	for(i=0;i<s0;i++)
+	  for(j=0;j<s1;j++)
+	    jsr[(i+o)*ns1+j+o]=(arr[i*s1+j]-min)*m;
+    }
+  else
+    {
+      c=3;			/* For CMYK. */
+      for(i=0;i<s0;i++)
+	for(j=0;j<s1;j++)    
+	  {
+	    start=((i+o)*ns1+j+o)*4;
+	    jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;
+	    jsr[start]=jsr[start+1]=jsr[start+2]=0;
+	  }
+    }
+
+  if(ob==0) return;
+  for(i=0;i<ns0;i++)
+    for(j=0;j<ns1;j++)
+      {
+	if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob) 
+	  jsr[i*ns1+j+c]=UCHAR_MAX;
+      }
+}
+
+
+
+
+
+/* Save a float array into a JPEG image. */
+void
+float2jpg(float *arr, size_t s0, size_t s1, struct a2jparams *p)
+{
+  JSAMPLE *a;
+
+  assert(p->color=='c' || p->color=='g');
+
+  makejsample(&a, s0, s1, p);
+  
+  if(p->ibord==0 && p->obord==0)
+    floatfilljsarr(a, arr, s0*s1, p->color, p->inv);
+  else
+    {
+      floatfilljsarr_wbord(a, arr, s0, s1, p);
+      s0+=2*(p->ibord+p->obord);
+      s1+=2*(p->ibord+p->obord);
+    }
+
+  writeJSAMPLEtoJPEG(p, a, s0, s1);
+
   free(a); 
 }

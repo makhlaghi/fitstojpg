@@ -12,6 +12,6 @@ LDLIBS=-lcfitsio -pthread -ljpeg -lm
 mockgals: $(objects) 
 	@$(CC) -o fits2jpg $(objects) $(LDLIBS) 
 	@rm *.o
-	./fits2jpg
+	./fits2jpg -cc
 
 .SILENT: $(objects)

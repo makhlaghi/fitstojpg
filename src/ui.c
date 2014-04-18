@@ -123,7 +123,7 @@ checkint(char *optarg, int *var, int opt)
   long tmp;
   char *tailptr;
   tmp=strtol(optarg, &tailptr, 0);
-  if(tmp<=0)
+  if(tmp<0)
     {
       printf("\n\n Error: argument to -%c ", opt); 
       printf("should be positive\n\n");
