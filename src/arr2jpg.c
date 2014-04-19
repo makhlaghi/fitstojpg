@@ -156,127 +156,291 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 
 
 /*************************************************************
- ***********       Prepare input FLOAT array       ***********
+ ***********     function body for all types       ***********
  *************************************************************/
-/* Fill the JSAMPLE array with no border. */
-void
-floatfilljsarr(JSAMPLE *jsr, float *arr, size_t size, char color,
-	       int inv)
-{
-  size_t i;
-  double m;
-  float min, max;
 
-  fminmax(arr, size, &min, &max);
+#define FILLJSARRBODY {				 \
+  if(p->color=='g')                              \
+    {                                            \
+      if(p->inv)                                 \
+	for(i=0;i<size;i++)                      \
+	  jsr[i]=UCHAR_MAX-(arr[i]-min)*m;       \
+      else                                       \
+	for(i=0;i<size;i++)                      \
+	  jsr[i]=(arr[i]-min)*m;                 \
+    }                                            \
+  else                                           \
+    {                                            \
+      for(i=0;i<size;i++)                        \
+	{                                        \
+	  jsr[i*4+3]=(arr[i]-min)*m;             \
+	  jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=0;      \
+	}                                        \
+    }                                            \
+  }                                             
+
+#define FILLJSARRAYWITHBORDBODY {                               \
+  assert(min<max); /* Might go crazy sometimes! */              \
+                                                                \
+  ib=p->ibord;                                                  \
+  ob=p->obord;                                                  \
+  o=ib+ob;                                                      \
+  ns0=s0+2*o;                                                   \
+  ns1=s1+2*o;                                                   \
+                                                                \
+  if(p->color=='g')                                             \
+    {                                                           \
+      if(p->inv)                                                \
+	for(i=0;i<s0;i++)                                       \
+	  for(j=0;j<s1;j++)                                     \
+	    jsr[(i+o)*ns1+j+o]=UCHAR_MAX-(arr[i*s1+j]-min)*m;   \
+      else                                                      \
+	for(i=0;i<s0;i++)                                       \
+	  for(j=0;j<s1;j++)                                     \
+	    jsr[(i+o)*ns1+j+o]=(arr[i*s1+j]-min)*m;             \
+                                                                \
+      if(ob==0) return;                                         \
+      for(i=0;i<ns0;i++)                                        \
+	for(j=0;j<ns1;j++)                                      \
+	    if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob)          \
+	      jsr[i*ns1+j]=UCHAR_MAX;                           \
+    }                                                           \
+  else                                                          \
+    {                                                           \
+      for(i=0;i<s0;i++)                                         \
+	for(j=0;j<s1;j++)                                       \
+	  {                                                     \
+	    start=((i+o)*ns1+j+o)*4;                            \
+	    jsr[start+3]=(arr[i*s1+j]-min)*m;                   \
+	    jsr[start]=jsr[start+1]=jsr[start+2]=0;             \
+	  }                                                     \
+                                                                \
+      if(ob==0) return;                                         \
+      for(i=0;i<ns0;i++)                                        \
+	for(j=0;j<ns1;j++)                                      \
+	    if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob)          \
+	      jsr[(i*ns1+j)*4+3]=UCHAR_MAX;                     \
+    }                                                           \
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*************************************************************
+ ***********         Functions for all types       ***********
+ *************************************************************/
+void
+bytefilljsarr(JSAMPLE *jsr, unsigned char *arr, size_t s0, size_t s1, 
+	      struct a2jparams *p)
+{
+  double m;
+  size_t size, ib, ob;
+  unsigned char min, max;
+  size_t i, j, start, o, ns0, ns1;
+
+  ucminmax(arr, s0*s1, &min, &max);
   m=(double)UCHAR_MAX/((double)max-(double)min);
 
-  if(color=='g')
-    {
-      if(inv)
-	for(i=0;i<size;i++)
-	  jsr[i]=UCHAR_MAX-(arr[i]-min)*m;
-      else
-	for(i=0;i<size;i++)
-	  jsr[i]=(arr[i]-min)*m;
-    }
+  size=s0*s1;
+  if(p->ibord==0 && p->obord==0)
+    {FILLJSARRBODY}
   else
-    {
-      for(i=0;i<size;i++)
-	{
-	  jsr[i*4+3]=(arr[i]-min)*m;
-	  jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=0;
-	}
-    }
+    {FILLJSARRAYWITHBORDBODY}
 }
 
 
 
 
 
-/* Fill the JSAMPLE array, leaving space for a border. */
 void
-floatfilljsarr_wbord(JSAMPLE *jsr, float *arr, size_t s0, size_t s1, 
+shortfilljsarr(JSAMPLE *jsr, short *arr, size_t s0, size_t s1, 
+	      struct a2jparams *p)
+{
+  double m;
+  short min, max;
+  size_t size, ib, ob;
+  size_t i, j, start, o, ns0, ns1;
+
+  shortminmax(arr, s0*s1, &min, &max);
+  m=(double)UCHAR_MAX/((double)max-(double)min);
+
+  size=s0*s1;
+  if(p->ibord==0 && p->obord==0)
+    {FILLJSARRBODY}
+  else
+    {FILLJSARRAYWITHBORDBODY}
+}
+
+
+
+
+
+void
+longfilljsarr(JSAMPLE *jsr, long *arr, size_t s0, size_t s1, 
+	      struct a2jparams *p)
+{
+  double m;
+  long min, max;
+  size_t size, ib, ob;
+  size_t i, j, start, o, ns0, ns1;
+
+  longminmax(arr, s0*s1, &min, &max);
+  m=(double)UCHAR_MAX/((double)max-(double)min);
+
+  size=s0*s1;
+  if(p->ibord==0 && p->obord==0)
+    {FILLJSARRBODY}
+  else
+    {FILLJSARRAYWITHBORDBODY}
+}
+
+
+
+
+
+void
+floatfilljsarr(JSAMPLE *jsr, float *arr, size_t s0, size_t s1, 
 		 struct a2jparams *p)
 {
   double m;
-  size_t ib, ob;
   float min, max;
+  size_t size, ib, ob;
   size_t i, j, start, o, ns0, ns1;
 
-  fminmax(arr, s0*s1, &min, &max);
+  floatminmax(arr, s0*s1, &min, &max);
   m=(double)UCHAR_MAX/((double)max-(double)min);
 
-  assert(min<max);		/* Might go crazy sometimes! */
-
-  ib=p->ibord;
-  ob=p->obord;
-  o=ib+ob;
-  ns0=s0+2*o;
-  ns1=s1+2*o;
-
-  if(p->color=='g')
-    {
-      if(p->inv)
-	for(i=0;i<s0;i++)
-	  for(j=0;j<s1;j++)
-	    jsr[(i+o)*ns1+j+o]=UCHAR_MAX-(arr[i*s1+j]-min)*m;
-      else
-	for(i=0;i<s0;i++)
-	  for(j=0;j<s1;j++)
-	    jsr[(i+o)*ns1+j+o]=(arr[i*s1+j]-min)*m;
-
-      if(ob==0) return;
-      for(i=0;i<ns0;i++)
-	for(j=0;j<ns1;j++)
-	    if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob) 
-	      jsr[i*ns1+j]=UCHAR_MAX;
-    }
+  size=s0*s1;
+  if(p->ibord==0 && p->obord==0)
+    {FILLJSARRBODY}
   else
-    {
-      for(i=0;i<s0;i++)
-	for(j=0;j<s1;j++)    
-	  {
-	    start=((i+o)*ns1+j+o)*4;
-	    jsr[start+3]=(arr[i*s1+j]-min)*m;
-	    jsr[start]=jsr[start+1]=jsr[start+2]=0;
-	  }
-
-      if(ob==0) return;
-      for(i=0;i<ns0;i++)
-	for(j=0;j<ns1;j++)
-	    if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob) 
-	      jsr[(i*ns1+j)*4+3]=UCHAR_MAX;
-    }
+    {FILLJSARRAYWITHBORDBODY}
 }
 
 
 
 
 
+void
+doublefilljsarr(JSAMPLE *jsr, double *arr, size_t s0, size_t s1, 
+		 struct a2jparams *p)
+{
+  double m;
+  double min, max;
+  size_t size, ib, ob;
+  size_t i, j, start, o, ns0, ns1;
+
+  doubleminmax(arr, s0*s1, &min, &max);
+  m=(double)UCHAR_MAX/((double)max-(double)min);
+
+  size=s0*s1;
+  if(p->ibord==0 && p->obord==0)
+    {FILLJSARRBODY}
+  else
+    {FILLJSARRAYWITHBORDBODY}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*************************************************************
+ ***********             Main functions            ***********
+ *************************************************************/
 /* Save a float array into a JPEG image. */
 void
-float2jpg(float *arr, size_t s0, size_t s1, struct a2jparams *p)
+arr2jpg(void *arr, size_t s0, size_t s1, int bitpix, 
+	struct a2jparams *p)
 {
   /*size_t i;*/
-  JSAMPLE *a;
+  JSAMPLE *jsr;
 
   assert(p->color=='c' || p->color=='g');
   /*
   for(i=0;i<s0*s1;i++)
     arr[i]=i;
   */
-  makejsample(&a, s0, s1, p);
+  makejsample(&jsr, s0, s1, p);
   
-  if(p->ibord==0 && p->obord==0)
-    floatfilljsarr(a, arr, s0*s1, p->color, p->inv);
-  else
+  switch(bitpix)
     {
-      floatfilljsarr_wbord(a, arr, s0, s1, p);
+    case BYTE_IMG:
+      if(p->log) ucarrlog(arr, s0*s1, p);
+      if(p->low<p->high) truncucarray(arr, s0*s1, p->low, p->high);
+      bytefilljsarr(jsr, arr, s0, s1, p);
+      break;
+    case SHORT_IMG:
+      if(p->log) sarrlog(arr, s0*s1, p);
+      if(p->low<p->high) truncsarray(arr, s0*s1, p->low, p->high);
+      shortfilljsarr(jsr, arr, s0, s1, p);
+      break;
+    case LONG_IMG:
+      if(p->log) larrlog(arr, s0*s1, p);
+      if(p->low<p->high) trunclarray(arr, s0*s1, p->low, p->high);
+      longfilljsarr(jsr, arr, s0, s1, p);
+      break;
+    case FLOAT_IMG:
+      if(p->log) farrlog(arr, s0*s1, p);
+      if(p->low<p->high) truncfarray(arr, s0*s1, p->low, p->high);
+      floatfilljsarr(jsr, arr, s0, s1, p);
+      break;
+    case DOUBLE_IMG:
+      if(p->log) darrlog(arr, s0*s1, p);
+      if(p->low<p->high) truncdarray(arr, s0*s1, p->low, p->high);
+      doublefilljsarr(jsr, arr, s0, s1, p);
+      break;
+    case LONGLONG_IMG:
+      printf("\n\n%s. BITPIX=%d (long long) Not supported!\n\n",
+	     p->inname, bitpix);
+      exit(EXIT_FAILURE);
+    default:
+      printf("\n\n%s. BITPIX=%d, Not recognized!\n", 
+	     p->inname, bitpix);
+      printf("\tAcceptable values are: %d, %d, %d, %d, %d, %d\n",
+	     BYTE_IMG, SHORT_IMG, LONG_IMG, FLOAT_IMG, 
+	     DOUBLE_IMG, LONGLONG_IMG);
+      printf("\tSee the CFITSIO C programmer reference guide.\n\n");
+      exit(EXIT_FAILURE);
+    }
+
+  if(p->ibord!=0 || p->obord!=0)
+    {
       s0+=2*(p->ibord+p->obord);
       s1+=2*(p->ibord+p->obord);
     }
 
-  writeJSAMPLEtoJPEG(p, a, s0, s1);
+  writeJSAMPLEtoJPEG(p, jsr, s0, s1);
 
-  free(a); 
+  free(jsr); 
 }

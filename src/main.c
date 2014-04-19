@@ -36,6 +36,7 @@ int
 main(int argc, char *argv[])
 {
   void *arr;
+  int bitpix;
   size_t s0, s1;
   struct a2jparams in;
 
@@ -47,14 +48,9 @@ main(int argc, char *argv[])
 
   checkremoveoutimage(in.outname);
 
-  fits_to_array(in.inname, in.ext, "FLOAT", &arr, &s0, &s1);
+  fits_to_array(in.inname, in.ext, &bitpix, &arr, &s0, &s1);
 
-  if(in.log) farrlog(arr, s0*s1, &in);
-
-  if(in.low<in.high) /* If they are equal, don't! */
-    truncfarray(arr, s0*s1, in.low, in.high);
-  
-  float2jpg(arr, s0, s1, &in);
+  arr2jpg(arr, s0, s1, bitpix, &in);
 
   free(arr);
   return 0;

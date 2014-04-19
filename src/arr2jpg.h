@@ -23,23 +23,41 @@ along with fits2jpg. If not, see <http://www.gnu.org/licenses/>.
 #ifndef ARR2JPG_H
 #define ARR2JPG_H
 
+
+/* Macros for various types. These are intentionally chosen to be the
+   same as CITSIO's implementation of the standard FITS types. */
+#define BYTE_IMG        8
+#define SHORT_IMG      16
+#define LONG_IMG       32
+#define LONGLONG_IMG   64
+#define FLOAT_IMG     -32
+#define DOUBLE_IMG    -64
+
+
+
+
+
+/* Structure to define the inputs into float2jpg. */
 struct a2jparams
 {
   char *inname;			/* Name of input. */
   char *outname;		/* Name of output. */
   char  color;			/* c: CMYK. g: Grayscale. */
+  int   inv;			/* Inverse grayscale image. */
   int   ext;			/* Extention of FITS image. */
   float width;			/* Width of image in cm. */
   float low;			/* Lower pixel value trunctation. */
   float high;			/* Higher pixel value truncation. */
   float log;			/* Logarithmic or not. */
-  float inv;			/* Inverse grayscale image. */
-  int ibord;		        /* Inner border (black) width. */
-  int obord;	        	/* Outer border (White) width. */
+  int   ibord;		        /* Inner border (black) width. */
+  int   obord;	        	/* Outer border (White) width. */
 };
 
+
+
 void
-float2jpg(float *arr, size_t s0, size_t s1, struct a2jparams *p);
+arr2jpg(void *arr, size_t s0, size_t s1, int bitpix, 
+	struct a2jparams *p);
 
 
 #endif
