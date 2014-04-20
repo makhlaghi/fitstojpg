@@ -184,12 +184,15 @@ printhelp(struct a2jparams *p)
 
   printf("####### Options without arguments (On or Off):\n");
   printf("By default all are off\n");
-  printf(" -n:\n\tDon't inverse greyscale image.\n");
-  printf("\tBy default all images are inversed:\n");
-  printf("\tdarker pixel value means larger values.\n");
-  printf("\tWe feel it is easier to the eyes like this.\n\n");
+  printf(" -n:\n\tDon't inverse the image.\n");
+  printf("\tBy default all images are inverted:\n");
+  printf("\ta larger pixel value is translated to darker colors.\n");
+  printf("\tThis is better for Astronomical objects with \n");
+  printf("\ta large area covered by the sky.\n\n");
 
-  printf(" -a:\n\tConvert all extentions to JPEG.\n\n");
+  printf(" -a:\n\tConvert all extentions to JPEG.\n");
+  printf("\tThe extention numbers will be appended to \n"); 
+  printf("\tthe JPEG names for each extention.\n\n");
 
   printf(" -l:\n\tLogarithmic scaling.\n\n\n");
 
@@ -197,18 +200,18 @@ printhelp(struct a2jparams *p)
   printf(" -i FILENAME:\n\tInput FITS image name.\n");
   printf("\tdefault: '%s'\n\n", p->inname);
 
-  printf(" -e INTEGER:\n\tFITS extention\n");
+  printf(" -e INTEGER:\n\tFITS extention (if '-n' is not called)\n");
   printf("\tdefault: %d\n\n", p->ext);
 
   printf(" -o FILENAME:\n\tOutput JPG image name\n");
-  printf("\tdefault: 'base.jpg', when input is 'base.fits'.\n\n");
+  printf("\tdefault. When input is 'base.fits': 'base.jpg'.\n\n");
 
   printf(" -w FLOAT:\n\tOutput JPG width in centimeters.\n");
   printf("\tdefault: %.3fcm\n\n", p->width);
 
   printf(" -c CHARACTER:\n\tColor mode:\n");
-  printf("\t\tc: CMYK (32bit per pixel) gray).\n");
-  printf("\t\tg: Gray scale image (8 bit pixels).\n");
+  printf("\t\tc: CMYK.\n");
+  printf("\t\tg: Gray scale image.\n");
   printf("\tdefault: %c\n\n", p->color);
 
   printf(" -p FLOAT:\n\tLower pixel value truncation.\n");
