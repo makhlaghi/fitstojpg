@@ -46,19 +46,22 @@ conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.h
 apply.
 
 In short the options are:
+* `-h`: View details of all options:
 
-* `-h`: View help.
+On/Off options:
 * `-l`: Logarithmic scaling.
 * `-n`: Don't inverse grayscale.
        (by default it is for easier printing and viewing.)
 * `-a`: Convert all extentions in a multiextention FITS image.
+
+Options that require arguments:
 * `-i`: Input FITS filename.
 * `-e`: Input FITS extention.
 * `-o`: Output JPEG name.
 * `-w`: Width in print in centimeters.
 * `-c`: Color space (grayscale or CMYK).
-* `-p`: Lower truncation radius.
-* `-q`: Higher truncation radius.
+* `-p`: Lower truncation pixel value.
+* `-q`: Higher truncation pixel value.
 * `-f`: Width of black inner border in pixels.
 * `-g`: Width of white outer border in pixels.
 

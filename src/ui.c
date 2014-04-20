@@ -27,6 +27,7 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 
 #include "arr2jpg.h"
+#include "main.h"
 #include "ui.h"
 
 
@@ -169,11 +170,17 @@ checkint(char *optarg, int *var, int opt)
 void
 printhelp(struct a2jparams *p)
 {
-  printf("\n\nfits2jpg 0.1  Copyright (C) 2013  Mohammad Akhlaghi\n");
+  printf("\n\nfits2jpg %.1f\n", FITS2JPGVERSION);
+  printf("============\n");
+  printf("Convert a FITS image to a grayscale or CMYK JPEG image.\n");
+  printf("\nCopyright (C) 2014  Mohammad Akhlaghi\n");
   printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
   printf("This is free software, and you are welcome to\n");
-  printf("redistribute it under the\n");
+  printf("redistribute it under the ");
   printf("GNU Public License v3 or later.\n\n\n");
+
+  printf("####### Options that won't run 'fits2jpg'.\n");
+  printf(" -h:\n\tPrint this command and abort.\n\n\n");
 
   printf("####### Options without arguments (On or Off):\n");
   printf("By default all are off\n");
@@ -184,9 +191,7 @@ printhelp(struct a2jparams *p)
 
   printf(" -a:\n\tConvert all extentions to JPEG.\n\n");
 
-  printf(" -l:\n\tLogarithmic scaling.\n\n");
-
-  printf(" -h:\n\tPrint this command and abort.\n\n");
+  printf(" -l:\n\tLogarithmic scaling.\n\n\n");
 
   printf("####### Options with arguments:\n");
   printf(" -i FILENAME:\n\tInput FITS image name.\n");
