@@ -30,6 +30,42 @@ along with fitsarrayvv. If not, see <http://www.gnu.org/licenses/>.
 
 
 
+/*************************************************************
+ ***********        Find number of extentions      ***********
+ *************************************************************/
+void
+numextinfits(char *inname, int *numext)
+{
+  int status=0;
+  fitsfile *fptr;
+
+  fits_open_file(&fptr, inname, READONLY, &status);  
+  fits_report_error(stderr, status);
+
+  fits_get_num_hdus(fptr, numext, &status);
+  fits_report_error(stderr, status);
+
+  fits_close_file(fptr, &status);
+  fits_report_error(stderr, status);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*************************************************************

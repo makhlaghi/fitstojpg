@@ -45,8 +45,9 @@ setdefaultoptions(struct a2jparams *p)
   p->inv=1;   /* Invert greyscale image by default. */
 
   p->inname="a.fits";
-  p->outname="a.jpg";
+  p->freeoutname=1;  /* We'll assume the user doesn't give any */
   p->color='g';
+  p->allext=0;
   p->ext=0;
   p->width=5.0f;
   p->low=0.0f;
@@ -94,6 +95,35 @@ checkinimage(char *inname)
     }
 }
 
+
+
+
+
+void
+findnamebase(char *inname, char **out)
+{
+  size_t i, l;
+  char *base;
+
+  l=strlen(inname);
+  /* The 50 is added in case all extentions are requested,
+     in which case a number will be added to the name and we 
+     need this extra space!*/
+  assert( (base=malloc((l+50)*sizeof *base))!=NULL );
+  strcpy(base, inname);
+  for(i=l;i!=0;i--)
+    if(base[i]=='.')
+      {
+	base[i]='\0';
+	break;
+      }
+  if(i==0)
+    {
+      printf("\n\n\tError: %s does not have a '.'\n\n", inname);
+      exit(EXIT_FAILURE);
+    }
+  *out=base;
+}
 
 
 
@@ -152,6 +182,8 @@ printhelp(struct a2jparams *p)
   printf("\tdarker pixel value means larger values.\n");
   printf("\tWe feel it is easier to the eyes like this.\n\n");
 
+  printf(" -a:\n\tConvert all extentions to JPEG.\n\n");
+
   printf(" -l:\n\tLogarithmic scaling.\n\n");
 
   printf(" -h:\n\tPrint this command and abort.\n\n");
@@ -164,7 +196,7 @@ printhelp(struct a2jparams *p)
   printf("\tdefault: %d\n\n", p->ext);
 
   printf(" -o FILENAME:\n\tOutput JPG image name\n");
-  printf("\tdefault: '%s'\n\n", p->outname);
+  printf("\tdefault: 'base.jpg', when input is 'base.fits'.\n\n");
 
   printf(" -w FLOAT:\n\tOutput JPG width in centimeters.\n");
   printf("\tdefault: %.3fcm\n\n", p->width);
@@ -174,11 +206,11 @@ printhelp(struct a2jparams *p)
   printf("\t\tg: Gray scale image (8 bit pixels).\n");
   printf("\tdefault: %c\n\n", p->color);
 
-  printf(" -a FLOAT:\n\tLower pixel value truncation.\n");
+  printf(" -p FLOAT:\n\tLower pixel value truncation.\n");
   printf("\tIf equal to higher, no truncation.\n");
   printf("\tdefault: %f\n\n", p->low);
 
-  printf(" -b FLOAT:\n\tHigher pixel value truncation.\n");
+  printf(" -q FLOAT:\n\tHigher pixel value truncation.\n");
   printf("\tIf equal to lower, no truncation.\n");
   printf("\tdefault: %f\n\n", p->high);
 
@@ -187,7 +219,6 @@ printhelp(struct a2jparams *p)
 
   printf(" -g INTEGER:\n\tOuter border width\n");
   printf("\tdefault: %d\n\n", p->obord);
-
 
   exit(EXIT_SUCCESS);
 }
@@ -198,31 +229,34 @@ printhelp(struct a2jparams *p)
 
 /* Read all the options into the program */
 void
-getsaveoptions(struct a2jparams *p, 
-	       int argc, char *argv[])
+getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 {
   int c;
   char *tailptr;
 
-  while( (c=getopt(argc, argv, "lhnc:e:o:i:w:a:b:f:g:")) != -1 )
+  while( (c=getopt(argc, argv, "lhanc:e:o:i:w:p:q:f:g:")) != -1 )
     switch(c)
       {
-	/* Options with no arguments: */
+      /* Options with no arguments: */
       case 'l':			/* Logarithmic scaling. */
 	p->log=1;
 	break;
       case 'h':			/* Print help. */
 	printhelp(p);
+      case 'a':			/* Convert all extentions. */
+	p->allext=1;
+	break;
       case 'n':			/* Logarithmic scaling. */
 	p->inv=0;
 	break;
 
-	/* Options with arguments: */
+      /* Options with arguments: */
       case 'i':			/* Input FITS image name. */
 	p->inname=optarg;
 	break;
       case 'o': 		/* Output JPEG image name. */
 	p->outname=optarg;
+	p->freeoutname=0;
 	break;
       case 'c':			/* Color scale. */
 	p->color=*optarg;
@@ -236,10 +270,10 @@ getsaveoptions(struct a2jparams *p,
 	    exit(EXIT_FAILURE);	    
 	  }
 	break;
-      case 'a':
+      case 'p':
 	p->low=strtof(optarg, &tailptr);
 	break;
-      case 'b':
+      case 'q':
 	p->high=strtof(optarg, &tailptr);
 	break;
       case 'e':			/* Extension of the FITS image. */
@@ -258,6 +292,14 @@ getsaveoptions(struct a2jparams *p,
 	abort();
       }
 
+  /* If outname was not set, set it here. In case all extentions are
+     wanted, then this job will be done else where. */
+  if(p->freeoutname==1 && p->allext==0)
+    {
+      findnamebase(p->inname, &p->outname);
+      strcat(p->outname, ".jpg");
+    }
+    
   /* Check the lower and higher trunction values. */
   if(p->low>p->high)
     {

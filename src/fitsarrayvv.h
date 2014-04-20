@@ -39,6 +39,11 @@ struct keywords
     char **comments_s; /* Comments for the string keywords     */
 };
 
+
+
+void
+numextinfits(char *inname, int *numext);
+
 void
 fits_to_array(char *fits_name, int exten, int *bitpix, 
 		void **array, size_t *size1, size_t *size2);
