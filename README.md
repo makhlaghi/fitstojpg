@@ -37,19 +37,20 @@ install` as root after the installation finishes.
 
 Some command line options can be given so you can customize the
 output, to learn them, run `./fits2jpg -h`.  A full list of all the
-options with some explanation will be provided, nealy all the
-operation of `fits2jpg` can be defined by these input options and
-their arguments.  The [POSIX argument syntax
-conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax)
-apply.
+options with some explanation and their default values will be shown.,
+Nealy all the operation of `fits2jpg` can be defined by these input
+options and their arguments.  The [POSIX argument syntax
+conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax) apply.
 
 In short the options are:
-* `-h`: View details of all options:
+* `-h`: View details and default values of all the options:
 
 On/Off options:
 * `-l`: Logarithmic scaling.
 * `-n`: Don't inverse. By default the images are inversed 
-        because it is usually for easier printing and viewing.
+        because it is usually easier for printing and 
+	viewing astronomical images where a large number of 
+	pixels are sky noise.
 * `-a`: Convert all extentions in a multiextention FITS image.
 
 Options that require arguments:
@@ -65,10 +66,9 @@ Options that require arguments:
 
 Future updates and issues:
 ------------
-1. Make a nice documentation.
-2. Add much more functionality and generality.
-3. Work on a better user experience.
-4. Fix any bugs I have not found yet!
+1. Add much more functionality and generality.
+2. Work on a better user experience.
+3. Fix any bugs I have not found yet!
 
 Comments and suggestions:
 ----------------------------------------
