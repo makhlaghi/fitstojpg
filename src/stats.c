@@ -28,15 +28,18 @@ along with fits2jpg. If not, see <http://www.gnu.org/licenses/>.
 #include "stats.h"
 
 
+#define SIMILARINMIN {     \
+  for(;in<fpt;in++)        \
+    if(*in<tmin) tmin=*in; \
+  *min=tmin;               \
+  }
 
 void
 ucharmin(unsigned char *in, size_t size, int *min)
 {
   unsigned char tmin=UCHAR_MAX, *fpt;
   fpt=in+size;
-  for(;in<fpt;in++)
-    if(*in<tmin) tmin=*in;
-  *min=tmin;
+  SIMILARINMIN
 }
 
 
@@ -48,9 +51,7 @@ shortmin(short *in, size_t size, short *min)
 {
   short tmin=SHRT_MAX, *fpt;
   fpt=in+size;
-  for(;in<fpt;in++)
-    if(*in<tmin) tmin=*in;
-  *min=tmin;
+  SIMILARINMIN
 }
 
 
@@ -62,9 +63,7 @@ longmin(long *in, size_t size, long *min)
 {
   long tmin=LONG_MAX, *fpt;
   fpt=in+size;
-  for(;in<fpt;in++)
-    if(*in<tmin) tmin=*in;
-  *min=tmin;
+  SIMILARINMIN
 }
 
 
@@ -75,9 +74,7 @@ floatmin(float *in, size_t size, float *min)
 {
   float tmin=MAXFD, *fpt;
   fpt=in+size;
-  for(;in<fpt;in++)
-    if(*in<tmin) tmin=*in;
-  *min=tmin;
+  SIMILARINMIN
 }
 
 
@@ -89,9 +86,7 @@ doublemin(double *in, size_t size, double *min)
 {
   double tmin=MAXFD, *fpt;
   fpt=in+size;
-  for(;in<fpt;in++)
-    if(*in<tmin) tmin=*in;
-  *min=tmin;
+  SIMILARINMIN
 }
 
 
@@ -116,20 +111,24 @@ doublemin(double *in, size_t size, double *min)
 /*************************************************************
  ***********    Finding the minimum and maximum    ***********
  *************************************************************/
+#define SIMILARMINMAX {        \
+  fpt=in+size;                 \
+  do                           \
+    {                          \
+      if(*in>tmax) tmax=*in;   \
+      if(*in<tmin) tmin=*in;   \
+    }                          \
+  while (++in<fpt);            \
+  *max=tmax;                   \
+  *min=tmin;                   \
+  }
+
 void
 ucminmax(unsigned char *in, size_t size, unsigned char *min, 
 	 unsigned char *max)
 {
   unsigned char tmin=UCHAR_MAX, tmax=0, *fpt;
-  fpt=in+size;
-  do
-    {
-      if(*in>tmax) tmax=*in;
-      if(*in<tmin) tmin=*in;
-    }
-  while (++in<fpt);
-  *max=tmax;    
-  *min=tmin;    
+  SIMILARMINMAX
 }
 
 
@@ -140,15 +139,7 @@ void
 shortminmax(short *in, size_t size, short *min, short *max)
 {
   short tmin=SHRT_MAX, tmax=SHRT_MIN, *fpt;
-  fpt=in+size;
-  do
-    {
-      if(*in>tmax) tmax=*in;
-      if(*in<tmin) tmin=*in;
-    }
-  while (++in<fpt);
-  *max=tmax;    
-  *min=tmin;    
+  SIMILARMINMAX
 }
 
 
@@ -159,15 +150,7 @@ void
 longminmax(long *in, size_t size, long *min, long *max)
 {
   long tmin=LONG_MAX, tmax=LONG_MIN, *fpt;
-  fpt=in+size;
-  do
-    {
-      if(*in>tmax) tmax=*in;
-      if(*in<tmin) tmin=*in;
-    }
-  while (++in<fpt);
-  *max=tmax;    
-  *min=tmin;    
+  SIMILARMINMAX
 }
 
 
@@ -178,15 +161,7 @@ void
 floatminmax(float *in, size_t size, float *min, float *max)
 {
   float tmin=MAXFD, tmax=MINFD, *fpt;
-  fpt=in+size;
-  do
-    {
-      if(*in>tmax) tmax=*in;
-      if(*in<tmin) tmin=*in;
-    }
-  while (++in<fpt);
-  *max=tmax;    
-  *min=tmin;    
+  SIMILARMINMAX
 }
 
 
@@ -197,15 +172,7 @@ void
 doubleminmax(double *in, size_t size, double *min, double *max)
 {
   double tmin=MAXFD, tmax=MINFD, *fpt;
-  fpt=in+size;
-  do
-    {
-      if(*in>tmax) tmax=*in;
-      if(*in<tmin) tmin=*in;
-    }
-  while (++in<fpt);
-  *max=tmax;    
-  *min=tmin;    
+  SIMILARMINMAX
 }
 
 
@@ -230,20 +197,23 @@ doubleminmax(double *in, size_t size, double *min, double *max)
 /*************************************************************
  ***********         Truncate the arrays           ***********
  *************************************************************/
+#define SIMILARTRUNCATE {         \
+  assert(low<high);               \
+  fpt=in+size;                    \
+  do                              \
+    {                             \
+      if(*in>high) *in=high;      \
+      else if(*in<low) *in=low;   \
+    }                             \
+  while(++in<fpt);                \
+  }
+
 void 
 truncucarray(unsigned char *in, size_t size, unsigned char low, 
 	     unsigned char high)
 {
   unsigned char *fpt;
-  assert(low<high);
-
-  fpt=in+size;    
-  do
-    {
-      if(*in>high) *in=high;
-      else if(*in<low) *in=low;
-    }
-  while(++in<fpt);
+  SIMILARTRUNCATE
 }
 
 
@@ -254,15 +224,7 @@ void
 truncsarray(short *in, size_t size, short low, short high)
 {
   short *fpt;
-  assert(low<high);
-
-  fpt=in+size;    
-  do
-    {
-      if(*in>high) *in=high;
-      else if(*in<low) *in=low;
-    }
-  while(++in<fpt);
+  SIMILARTRUNCATE
 }
 
 
@@ -273,15 +235,7 @@ void
 trunclarray(long *in, size_t size, long low, long high)
 {
   long *fpt;
-  assert(low<high);
-
-  fpt=in+size;    
-  do
-    {
-      if(*in>high) *in=high;
-      else if(*in<low) *in=low;
-    }
-  while(++in<fpt);
+  SIMILARTRUNCATE
 }
 
 
@@ -292,15 +246,7 @@ void
 truncfarray(float *in, size_t size, float low, float high)
 {
   float *fpt;
-  assert(low<high);
-
-  fpt=in+size;    
-  do
-    {
-      if(*in>high) *in=high;
-      else if(*in<low) *in=low;
-    }
-  while(++in<fpt);
+  SIMILARTRUNCATE
 }
 
 
@@ -311,15 +257,7 @@ void
 truncdarray(double *in, size_t size, double low, double high)
 {
   double *fpt;
-  assert(low<high);
-
-  fpt=in+size;    
-  do
-    {
-      if(*in>high) *in=high;
-      else if(*in<low) *in=low;
-    }
-  while(++in<fpt);
+  SIMILARTRUNCATE
 }
 
 
@@ -344,6 +282,18 @@ truncdarray(double *in, size_t size, double low, double high)
 /*************************************************************
  ***********             Find the log              ***********
  *************************************************************/
+#define SIMILARLOG {                 \
+  fpt=in+size;                       \
+  do                                 \
+    *in=logf(*in-min);               \
+  while(++in<fpt);                   \
+  if(p->low<p->high)                 \
+    {                                \
+      p->low=logf(p->low-min);       \
+      p->high=logf(p->high-min);     \
+    }                                \
+  }
+
 void
 ucarrlog(unsigned char *in, size_t size, struct a2jparams *p)
 {
@@ -352,17 +302,7 @@ ucarrlog(unsigned char *in, size_t size, struct a2jparams *p)
 
   ucharmin(in, size, &min);
   if(min==0) min=-1;  /* So we don't have log(0) */
-
-  fpt=in+size;
-  do
-    *in=logf(*in-min);
-  while(++in<fpt);
-
-  if(p->low<p->high)
-    {
-      p->low=logf(p->low-min);
-      p->high=logf(p->high-min);
-    }
+  SIMILARLOG
 }
 
 
@@ -376,17 +316,7 @@ sarrlog(short *in, size_t size, struct a2jparams *p)
 
   shortmin(in, size, &min);
   min-=1; /* So we don't have log(0) */
-
-  fpt=in+size;
-  do
-    *in=logf(*in-min);
-  while(++in<fpt);
-
-  if(p->low<p->high)
-    {
-      p->low=logf(p->low-min);
-      p->high=logf(p->high-min);
-    }
+  SIMILARLOG
 }
 
 
@@ -400,17 +330,7 @@ larrlog(long *in, size_t size, struct a2jparams *p)
 
   longmin(in, size, &min);
   min-=1; /* So we don't have log(0) */
-
-  fpt=in+size;
-  do
-    *in=logf(*in-min);
-  while(++in<fpt);
-
-  if(p->low<p->high)
-    {
-      p->low=logf(p->low-min);
-      p->high=logf(p->high-min);
-    }
+  SIMILARLOG
 }
 
 
@@ -424,17 +344,7 @@ farrlog(float *in, size_t size, struct a2jparams *p)
 
   floatmin(in, size, &min);
   min-=-0.0001*min; /* So we don't calculate log(0). */
-
-  fpt=in+size;
-  do
-    *in=logf(*in-min);
-  while(++in<fpt);
-
-  if(p->low<p->high)
-    {
-      p->low=logf(p->low-min);
-      p->high=logf(p->high-min);
-    }
+  SIMILARLOG
 }
 
 
@@ -448,15 +358,5 @@ darrlog(double *in, size_t size, struct a2jparams *p)
 
   doublemin(in, size, &min);
   min-=-0.0001*min; /* So we don't calculate log(0). */
-
-  fpt=in+size;
-  do
-    *in=logf(*in-min);
-  while(++in<fpt);
-
-  if(p->low<p->high)
-    {
-      p->low=logf(p->low-min);
-      p->high=logf(p->high-min);
-    }
+  SIMILARLOG
 }
