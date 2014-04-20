@@ -3,8 +3,6 @@ fits2jpg
 
 Convert a FITS image to a grayscale or CMYK JPEG image.
 
-Note: CMYK colors are still faulty, I will fix it as soon as possible.
-
 Description:
 ------------
 
@@ -50,8 +48,8 @@ In short the options are:
 
 On/Off options:
 * `-l`: Logarithmic scaling.
-* `-n`: Don't inverse grayscale.
-       (by default it is for easier printing and viewing.)
+* `-n`: Don't inverse. By default the images are inversed 
+        because it is usually for easier printing and viewing.
 * `-a`: Convert all extentions in a multiextention FITS image.
 
 Options that require arguments:
@@ -67,7 +65,6 @@ Options that require arguments:
 
 Future updates and issues:
 ------------
-0. The CMYK output is not yet correct!
 1. Make a nice documentation.
 2. Add much more functionality and generality.
 3. Work on a better user experience.

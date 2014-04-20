@@ -44,11 +44,11 @@ setdefaultoptions(struct a2jparams *p)
 {
   p->log=0;
   p->inv=1;   /* Invert greyscale image by default. */
+  p->allext=0;
 
   p->inname="a.fits";
   p->freeoutname=1;  /* We'll assume the user doesn't give any */
   p->color='g';
-  p->allext=0;
   p->ext=0;
   p->width=5.0f;
   p->low=0.0f;
