@@ -166,9 +166,9 @@ checkint(char *optarg, int *var, int opt)
 
 
 
-/* Print the help menu. */
+
 void
-printhelp(struct a2jparams *p)
+printversioninfo()
 {
   printf("\n\nfits2jpg %.1f\n", FITS2JPGVERSION);
   printf("============\n");
@@ -178,9 +178,20 @@ printhelp(struct a2jparams *p)
   printf("This is free software, and you are welcome to\n");
   printf("redistribute it under the ");
   printf("GNU Public License v3 or later.\n\n\n");
+}
 
+
+
+
+
+/* Print the help menu. */
+void
+printhelp(struct a2jparams *p)
+{
+  printversioninfo();
   printf("####### Options that won't run 'fits2jpg'.\n");
-  printf(" -h:\n\tPrint this command and abort.\n\n\n");
+  printf(" -h:\n\tPrint this command and abort.\n\n");
+  printf(" -v:\n\tPrint only version and copyright information.\n\n\n");
 
   printf("####### Options without arguments (On or Off):\n");
   printf("By default all are off\n");
@@ -197,8 +208,7 @@ printhelp(struct a2jparams *p)
   printf(" -l:\n\tLogarithmic scaling.\n\n\n");
 
   printf("####### Options with arguments:\n");
-  printf(" -i FILENAME:\n\tInput FITS image name.\n");
-  printf("\tdefault: '%s'\n\n", p->inname);
+  printf(" -i FILENAME:\n\tInput FITS image name.\n\n");
 
   printf(" -e INTEGER:\n\tFITS extention (if '-n' is not called)\n");
   printf("\tdefault: %d\n\n", p->ext);
@@ -226,7 +236,7 @@ printhelp(struct a2jparams *p)
   printf("\tdefault: %d\n\n", p->ibord);
 
   printf(" -g INTEGER:\n\tOuter (white) border width\n");
-  printf("\tdefault: %d\n\n", p->obord);
+  printf("\tdefault: %d\n\n\n", p->obord);
 
   exit(EXIT_SUCCESS);
 }
@@ -242,7 +252,10 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
   int c;
   char *tailptr;
 
-  while( (c=getopt(argc, argv, "lhanc:e:o:i:w:p:q:f:g:")) != -1 )
+  if(argc==1)
+    printhelp(p);
+
+  while( (c=getopt(argc, argv, "lhvanc:e:o:i:w:p:q:f:g:")) != -1 )
     switch(c)
       {
       /* Options with no arguments: */
@@ -251,6 +264,9 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 	break;
       case 'h':			/* Print help. */
 	printhelp(p);
+      case 'v':			/* Print version. */
+	printversioninfo();
+	exit(EXIT_SUCCESS);
       case 'a':			/* Convert all extentions. */
 	p->allext=1;
 	break;

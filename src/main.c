@@ -69,8 +69,8 @@ convertoneext(struct a2jparams *p)
   size_t s0, s1;
 
   fits_to_array(p->inname, p->ext, &bitpix, &arr, &s0, &s1);
-  checkremoveoutimage(p->outname);
-  arr2jpg(arr, s0, s1, bitpix, p);
+  checkremoveoutimage(p->outname);   /* ui.c */
+  arr2jpg(arr, s0, s1, bitpix, p);   /* arr2jpg.c */
   
   free(arr);
 }
@@ -85,7 +85,7 @@ convertallext(struct a2jparams *p)
   char *base;
   int  i, numext;
 
-  numextinfits(p->inname, &numext);
+  numextinfits(p->inname, &numext);  /* fitsarrayvv.c */
 
   /* Check which name to use as base. */
   if(p->freeoutname==0)/* an outname is supplied. */
@@ -96,7 +96,7 @@ convertallext(struct a2jparams *p)
 	 allocated in ui.c. It will be allocated here and freed
 	 here. */
       p->freeoutname=0;
-      findnamebase(p->inname, &base);
+      findnamebase(p->inname, &base);  /* ui.c */
     }
 
   p->outname=malloc(strlen(base)*sizeof *(p->outname));

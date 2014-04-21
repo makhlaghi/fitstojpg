@@ -37,13 +37,14 @@ install` as root after the installation finishes.
 
 Some command line options can be given so you can customize the
 output, to learn them, run `./fits2jpg -h`.  A full list of all the
-options with some explanation and their default values will be shown.,
+options with some explanation and their default values will be shown.
 Nealy all the operation of `fits2jpg` can be defined by these input
 options and their arguments.  The [POSIX argument syntax
 conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax) apply.
 
 In short the options are:
-* `-h`: View details and default values of all the options:
+* `-h`: View details and default values of all the options.
+* `-v`: View only version and copyright information.
 
 On/Off options:
 * `-l`: Logarithmic scaling.
