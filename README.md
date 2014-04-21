@@ -15,7 +15,7 @@ images. The resolution of the output JPEG image is identical to the
 input image.
 
 
-Prerequisits:
+Requirements:
 ------------
 `fits2jpg` requires two packages to be installed on your
 machine, installing them is easy and straightforward. 
@@ -30,9 +30,9 @@ machine, installing them is easy and straightforward.
 Installing and running:
 ------------
  
-To install this `fits2jpg`, after downloading or cloning it, all you
-have to do is to run `make` in the downloaded directory. In order to
-be able to run `fits2jpg` from anywhere on your system, run `make
+To install `fits2jpg`, after downloading or cloning it, all you have
+to do is to run `make` in the downloaded directory. In order to be
+able to run `fits2jpg` from anywhere on your system, run `make
 install` as root after the installation finishes.
 
 Some command line options can be given so you can customize the

@@ -39,7 +39,7 @@ void
 makejsample(JSAMPLE **a, size_t s0, size_t s1, struct a2jparams *p)
 {
   size_t size, o;
-  JSAMPLE *jsarr;
+  JSAMPLE *jsarr, *fpt, *pt;
 
   if(sizeof *jsarr!=1)
     {
@@ -52,10 +52,18 @@ makejsample(JSAMPLE **a, size_t s0, size_t s1, struct a2jparams *p)
   size=(s0+o)*(s1+o);
   if(p->color=='c') size*=4;	/* For CMYK. */
 
-  if(p->obord+p->ibord)
+  if(p->obord+p->ibord && p->color=='g')
     assert( (jsarr=calloc(size, sizeof *jsarr))!=NULL );
   else
-    assert( (jsarr=malloc(size*sizeof *jsarr))!=NULL );   
+    assert( (jsarr=malloc(size*sizeof *jsarr))!=NULL );
+
+  if(p->color=='c')
+    {
+      pt=jsarr;  fpt=jsarr+size;
+      do
+	*pt=UCHAR_MAX;
+      while(++pt<fpt);
+    }
 
   *a=jsarr;
 }
@@ -159,24 +167,31 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
  ***********     function body for all types       ***********
  *************************************************************/
 
-#define FILLJSARRBODY {				    \
-  if(p->color=='g')                                 \
-    {                                               \
-      if(p->inv)                                    \
-	for(i=0;i<size;i++)                         \
-	  jsr[i]=UCHAR_MAX-(arr[i]-min)*m;          \
-      else                                          \
-	for(i=0;i<size;i++)                         \
-	  jsr[i]=(arr[i]-min)*m;                    \
-    }                                               \
-  else                                              \
-    {                                               \
-      for(i=0;i<size;i++)                           \
-	{                                           \
-	  jsr[i*4+3]=(arr[i]-min)*m;                \
-	  jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX; \
-	}                                           \
-    }                                               \
+#define FILLJSARRBODY {				                \
+  if(p->color=='g')                                             \
+    {                                                           \
+      if(p->inv)                                                \
+	for(i=0;i<size;i++)                                     \
+	  jsr[i]=UCHAR_MAX-(arr[i]-min)*m;                      \
+      else                                                      \
+	for(i=0;i<size;i++)                                     \
+	  jsr[i]=(arr[i]-min)*m;                                \
+    }                                                           \
+  else                                                          \
+    {                                                           \
+      if(p->inv)				                \
+	for(i=0;i<size;i++)			                \
+	  {					                \
+	    jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;		\
+	    jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	      	\
+	  }                                                     \
+      else							\
+	for(i=0;i<size;i++)			                \
+	  {					                \
+	    jsr[i*4+3]=(arr[i]-min)*m;		                \
+	    jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	        \
+	  }					        	\
+    }                                                           \
   }                                             
 
 
@@ -184,8 +199,6 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 
 
 #define FILLJSARRAYWITHBORDBODY {                               \
-  assert(min<max); /* Might go crazy sometimes! */              \
-                                                                \
   ib=p->ibord;                                                  \
   ob=p->obord;                                                  \
   o=ib+ob;                                                      \
@@ -217,7 +230,6 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 	    {							\
 	      start=((i+o)*ns1+j+o)*4;				\
 	      jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;       \
-	      jsr[start]=jsr[start+1]=jsr[start+2]=UCHAR_MAX;	\
 	    }							\
       else                                                      \
 	for(i=0;i<s0;i++)					\
@@ -225,18 +237,15 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 	    {							\
 	      start=((i+o)*ns1+j+o)*4;				\
 	      jsr[start+3]=(arr[i*s1+j]-min)*m;			\
-	      jsr[start]=jsr[start+1]=jsr[start+2]=UCHAR_MAX;	\
 	    }							\
       /* Add border: */						\
       if(ob==0) return;                                         \
       for(i=0;i<ns0;i++)                                        \
 	for(j=0;j<ns1;j++)                                      \
-	  if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob)		\
-	    {							\
-	      start=(i*ns1+j)*4;				\
-	      jsr[start+3]=UCHAR_MAX;				\
-	      jsr[start]=jsr[start+1]=jsr[start+2]=UCHAR_MAX;   \
-	    }							\
+	  if( (i>=ob && i<o) || (i>=ns0-o && i<ns0-ob) ||	\
+	      (j>=ob && j<o) || (j>=ns1-o && j<ns1-ob) )	\
+	    if(i>=ob && i<ns0-ob && j>=ob && j<ns1-ob)		\
+	      jsr[(i*ns1+j)*4+3]=0;				\
     }                                                           \
   }
 

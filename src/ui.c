@@ -48,7 +48,7 @@ setdefaultoptions(struct a2jparams *p)
 
   p->inname="a.fits";
   p->freeoutname=1;  /* We'll assume the user doesn't give any */
-  p->color='g';
+  p->color='c';
   p->ext=0;
   p->width=5.0f;
   p->low=0.0f;
@@ -222,10 +222,10 @@ printhelp(struct a2jparams *p)
   printf("\tIf equal to lower, no truncation.\n");
   printf("\tdefault: %f\n\n", p->high);
 
-  printf(" -f INTEGER:\n\tInner border width\n");
+  printf(" -f INTEGER:\n\tInner (black) border width\n");
   printf("\tdefault: %d\n\n", p->ibord);
 
-  printf(" -g INTEGER:\n\tOuter border width\n");
+  printf(" -g INTEGER:\n\tOuter (white) border width\n");
   printf("\tdefault: %d\n\n", p->obord);
 
   exit(EXIT_SUCCESS);

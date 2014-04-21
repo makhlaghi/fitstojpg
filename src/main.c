@@ -26,10 +26,10 @@ along with fits2jpg. If not, see <http://www.gnu.org/licenses/>.
 #include <jpeglib.h>
 
 #include "arr2jpg.h"
-#include "fitsarrayvv.h"
 #include "ui.h"
 #include "stats.h"
 #include "main.h"
+#include "fitsarrayvv.h"
 
 
 
@@ -40,16 +40,16 @@ main(int argc, char *argv[])
 {
   struct a2jparams in;
 
-  setdefaultoptions(&in);
+  setdefaultoptions(&in);	     /* ui.c */
 
-  getsaveoptions(&in, argc, argv);
+  getsaveoptions(&in, argc, argv);   /* ui.c */
   
-  checkinimage(in.inname);
+  checkinimage(in.inname);	     /* ui.c */
 
   if(in.allext)
-    convertallext(&in);
+    convertallext(&in);		     /* below! */
   else
-    convertoneext(&in);
+    convertoneext(&in);		     /* below! */
 
   if(in.freeoutname)
     free(in.outname);
