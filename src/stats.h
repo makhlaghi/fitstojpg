@@ -27,18 +27,6 @@ along with fits2jpg. If not, see <http://www.gnu.org/licenses/>.
 #define MAXFD  1e30
 
 
-void
-ucharmin(unsigned char *in, size_t size, int *min);
-void
-shortmin(short *in, size_t size, short *min);
-void
-longmin(long *in, size_t size, long *min);
-void
-floatmin(float *in, size_t size, float *min);
-void
-doublemin(double *in, size_t size, double *min);
-
-
 
 
 void
@@ -72,16 +60,30 @@ truncdarray(double *in, size_t size, double low, double high);
 
 
 
+void
+ucharminpos(unsigned char *in, size_t size, int *min);
+void
+shortminpos(short *in, size_t size, short *min);
+void
+longminpos(long *in, size_t size, long *min);
+void
+floatminpos(float *in, size_t size, float *min);
+void
+doubleminpos(double *in, size_t size, double *min);
+
+
+
+
 
 void
-ucarrlog(unsigned char *in, size_t size, struct a2jparams *p);
+ucarrlog(unsigned char *in, size_t size);
 void
-sarrlog(short *in, size_t size, struct a2jparams *p);
+sarrlog(short *in, size_t size);
 void
-larrlog(long *in, size_t size, struct a2jparams *p);
+larrlog(long *in, size_t size);
 void
-farrlog(float *in, size_t size, struct a2jparams *p);
+farrlog(float *in, size_t size);
 void
-darrlog(double *in, size_t size, struct a2jparams *p);
+darrlog(double *in, size_t size);
 
 #endif
