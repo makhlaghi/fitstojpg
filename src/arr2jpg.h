@@ -58,6 +58,7 @@ struct a2jparams
   char *inname;			/* Name of input. */
   char *outname;		/* Name of output. */
   char  color;			/* c: CMYK. g: Grayscale. */
+  int   quality;		/* Quality of JPEG compression. */
   int   ext;			/* Extention of FITS image. */
   float width;			/* Width of image in cm. */
   float low;			/* Lower pixel value trunctation. */

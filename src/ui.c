@@ -52,6 +52,7 @@ setdefaultoptions(struct a2jparams *p)
   /* Options with arguments. */
   p->inname      ="a.fits";
   p->color       ='c';
+  p->quality     =100;
   p->ext         =0;
   p->width       =5.0f;
   p->low         =0.0f;
@@ -192,6 +193,32 @@ checkint(char *optarg, int *var, int opt)
 
 
 void
+checkintlimit(char *optarg, int *var, int opt, 
+	      int llimit, int hlimit)
+{
+  long tmp;
+  char *tailptr;
+  tmp=strtol(optarg, &tailptr, 0);
+  if(tmp<llimit)
+    {
+      printf("\n\n Error: argument to -%c ", opt); 
+      printf("should be larger than %d\n\n", llimit);
+      exit(EXIT_FAILURE);
+    }
+  if(tmp>hlimit)
+    {
+      printf("\n\n Error: argument to -%c ", opt); 
+      printf("should be smaller than %d\n\n", hlimit);
+      exit(EXIT_FAILURE);
+    }
+  *var=tmp;  
+}
+
+
+
+
+
+void
 printversioninfo()
 {
   printf("\n\nfits2jpg %.1f\n", FITS2JPGVERSION);
@@ -250,6 +277,12 @@ printhelp(struct a2jparams *p)
 
   printf(" -o FILENAME\n\tOutput JPG image name\n");
   printf("\tdefault. When input is 'base.fits': 'base.jpg'.\n\n");
+
+  printf(" -u INTEGER\n\tOutput JPG quality.\n");
+  printf("\t100: No compression, high quality. As the value\n");
+  printf("\tdecreases, the compression is more effective\n");
+  printf("\but the tquality decreases.\n");
+  printf("\tdefault: %d.\n\n", p->quality);
 
   printf(" -w FLOAT\n\tOutput JPG width in centimeters.\n");
   printf("\tdefault: %.3fcm\n\n", p->width);
@@ -342,7 +375,7 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
   if(argc==1)
     printhelp(p);
 
-  while( (c=getopt(argc, argv, "hvltbanc:e:o:i:w:p:q:f:g:r:")) != -1 )
+  while( (c=getopt(argc, argv, "hvltbanc:e:o:i:w:p:q:f:g:r:u:")) != -1 )
     switch(c)
       {
       case 'h':			/* Print help. */
@@ -378,6 +411,9 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 	break;
       case 'c':			/* Color scale. */
 	p->color=*optarg;
+	break;
+      case 'u':			/* Quality of JPEG compression. */
+	checkintlimit(optarg, &p->quality, c, 0, 100);
 	break;
       case 'w':
 	p->width=strtof(optarg, &tailptr);

@@ -14,6 +14,47 @@ scale or CMYK (with only the black channel being active) JPEG format
 images. The resolution of the output JPEG image is identical to the 
 input image.
 
+Why CMYK?
+---------
+
+The major advantage in saving in the CMYK color space is in printing.
+So if you don't want to ultimately print the image, it doesn't really
+matter that much. But if you do want to print your FITS image in a
+report or a paper, there is a big difference. Also some journals
+require the colors space of the images used to be CMYK. Most color
+printers use Cyan-Magenta-Yellow and Key (black) ink cartridges to do
+color printing. A FITS image only has one value per pixel, so it is
+essentially a greyscale image.
+
+When you send a grey scale image into a color printer, most printers
+use the combination of the three CMY colors to produce shades of
+grey. This results in a slightly blurred image due to the very small
+errors in printing each color and also in the extra use of ink. But
+when you save a FITS image only in the K channel of the CMYK color
+space, you force the printer to only use its black ink, this results
+in a sharper printed image with the shades of grey being more clear,
+you also use less ink so it is also more cost-effective! 
+
+Take a look at the figure below as an example, where in each figure,
+the bottom left pixel is complete black and the top right pixel is
+complete white. The one on the left is a grey scale JPEG image and on
+the right is a CMYK JPEG image with only the K channel used.  I have
+taken a screen shot of how the two images compare when I included then
+in a LaTeX document and viewed them on my desktop monitor.
+
+<img src="https://raw.github.com/makhlaghi/fits2jpg/master/doc/fits2jpg-figures/grey_CMYK_comp.jpg" width=600/>
+
+In print the ouputs are very similar. You see that the shades of grey
+in the left image (greyscale) are slightly more darker with a higher
+contrast. Most converters of an RBG space image to a CMYK use all
+three channels in their conversion, resulting in a very large file
+size. Since RBG requires 3 bytes per pixel but CMYK requires 4! But
+when you only save in the K channel of the CMYK color space, the JPEG
+image compression algorithm, detects the fact that you have left the
+three channels empty and the resulting image approximately has the
+same volume (in bytes) as a greyscale JPEG image that only has one
+byte per pixel. Therefore your report or paper has a lower volume than
+if you want to convert to CMYK and also prints better.
 
 Requirements:
 ------------
@@ -65,6 +106,7 @@ Options that require arguments:
 * `-i`: Input FITS filename.
 * `-e`: Input FITS extention.
 * `-o`: Output JPEG name.
+* `-u`: Quality of compression.
 * `-w`: Width in print in centimeters.
 * `-c`: Color space (grayscale or CMYK).
 * `-p`: Lower truncation pixel value.

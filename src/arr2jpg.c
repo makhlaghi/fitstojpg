@@ -126,7 +126,7 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
     }
 
   jpeg_set_defaults(&cinfo);
-  jpeg_set_quality(&cinfo, 100, TRUE);
+  jpeg_set_quality(&cinfo, p->quality, TRUE);
   cinfo.density_unit=1;
   cinfo.Y_density=cinfo.X_density=s1/(p->width/2.54);
   jpeg_start_compress(&cinfo, TRUE);
