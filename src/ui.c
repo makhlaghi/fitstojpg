@@ -281,7 +281,8 @@ printhelp(struct a2jparams *p)
   printf(" -u INTEGER\n\tOutput JPG quality.\n");
   printf("\t100: No compression, high quality. As the value\n");
   printf("\tdecreases, the compression is more effective\n");
-  printf("\but the tquality decreases.\n");
+  printf("\tresulting in a lower file  size, but the quality\n");
+  printf("\tdecreases.\n");
   printf("\tdefault: %d.\n\n", p->quality);
 
   printf(" -w FLOAT\n\tOutput JPG width in centimeters.\n");
