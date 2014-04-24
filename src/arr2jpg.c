@@ -438,26 +438,31 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
     {
     case BYTE_IMG:
       if(p->low<p->high) truncucarray(arr, s0*s1, p->low, p->high);
+      if(p->conv!=NULL) convuc(p->conv, arr, s0*s1);
       if(p->log) ucarrlog(arr, s0*s1);
       bytefilljsarr(jsr, arr, s0, s1, p);
       break;
     case SHORT_IMG:
       if(p->low<p->high) truncsarray(arr, s0*s1, p->low, p->high);
+      if(p->conv!=NULL) convs(p->conv, arr, s0*s1);
       if(p->log) sarrlog(arr, s0*s1);
       shortfilljsarr(jsr, arr, s0, s1, p);
       break;
     case LONG_IMG:
       if(p->low<p->high) trunclarray(arr, s0*s1, p->low, p->high);
+      if(p->conv!=NULL) convl(p->conv, arr, s0*s1);
       if(p->log) larrlog(arr, s0*s1);
       longfilljsarr(jsr, arr, s0, s1, p);
       break;
     case FLOAT_IMG:
       if(p->low<p->high) truncfarray(arr, s0*s1, p->low, p->high);
+      if(p->conv!=NULL) convf(p->conv, arr, s0*s1);
       if(p->log) farrlog(arr, s0*s1);
       floatfilljsarr(jsr, arr, s0, s1, p);
       break;
     case DOUBLE_IMG:
       if(p->low<p->high) truncdarray(arr, s0*s1, p->low, p->high);
+      if(p->conv!=NULL) convd(p->conv, arr, s0*s1);
       if(p->log) darrlog(arr, s0*s1);
       doublefilljsarr(jsr, arr, s0, s1, p);
       break;

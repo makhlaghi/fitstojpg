@@ -76,6 +76,21 @@ doubleminpos(double *in, size_t size, double *min);
 
 
 void
+convuc(struct conversion *p, unsigned char *in, size_t size);
+void
+convs(struct conversion *p, short *in, size_t size);
+void
+convl(struct conversion *p, long *in, size_t size);
+void
+convf(struct conversion *p, float *in, size_t size);
+void
+convd(struct conversion *p, double *in, size_t size);
+
+
+
+
+
+void
 ucarrlog(unsigned char *in, size_t size);
 void
 sarrlog(short *in, size_t size);

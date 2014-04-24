@@ -54,6 +54,8 @@ main(int argc, char *argv[])
   if(in.freeoutname)
     free(in.outname);
 
+  freeconvstruct(in.conv);	     /* ui.c  */
+
   return 0;
 }
 

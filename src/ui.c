@@ -58,6 +58,7 @@ setdefaultoptions(struct a2jparams *p)
   p->high        =0.0f;
   p->ibord       =1;
   p->obord       =1;
+  p->conv        =NULL;
 
   /* For internal use: */
   p->freeoutname =1;  /* We'll assume the user doesn't give any */
@@ -130,6 +131,23 @@ findnamebase(char *inname, char **out)
       exit(EXIT_FAILURE);
     }
   *out=base;
+}
+
+
+
+
+
+void
+freeconvstruct(struct conversion *c)
+{
+  struct conversion *t, *tt;
+  t=c;
+  while(t!=NULL)
+    {
+      tt=t->next;
+      free(t);
+      t=tt;
+    }
 }
 
 
@@ -225,37 +243,89 @@ printhelp(struct a2jparams *p)
 
 
   printf("####### Options with arguments:\n");
-  printf(" -i FILENAME:\n\tInput FITS image name.\n\n");
+  printf(" -i FILENAME\n\tInput FITS image name.\n\n");
 
-  printf(" -e INTEGER:\n\tFITS extention (if '-n' is not called)\n");
+  printf(" -e INTEGER\n\tFITS extention (if '-n' is not called)\n");
   printf("\tdefault: %d\n\n", p->ext);
 
-  printf(" -o FILENAME:\n\tOutput JPG image name\n");
+  printf(" -o FILENAME\n\tOutput JPG image name\n");
   printf("\tdefault. When input is 'base.fits': 'base.jpg'.\n\n");
 
-  printf(" -w FLOAT:\n\tOutput JPG width in centimeters.\n");
+  printf(" -w FLOAT\n\tOutput JPG width in centimeters.\n");
   printf("\tdefault: %.3fcm\n\n", p->width);
 
-  printf(" -c CHARACTER:\n\tColor mode:\n");
+  printf(" -c CHARACTER\n\tColor mode:\n");
   printf("\t\tc: CMYK.\n");
   printf("\t\tg: Gray scale image.\n");
   printf("\tdefault: %c\n\n", p->color);
 
-  printf(" -p FLOAT:\n\tLower pixel value truncation.\n");
+  printf(" -p FLOAT\n\tLower pixel value truncation.\n");
   printf("\tIf equal to higher, no truncation.\n");
   printf("\tdefault: %f\n\n", p->low);
 
-  printf(" -q FLOAT:\n\tHigher pixel value truncation.\n");
+  printf(" -q FLOAT\n\tHigher pixel value truncation.\n");
   printf("\tIf equal to lower, no truncation.\n");
   printf("\tdefault: %f\n\n", p->high);
 
-  printf(" -f INTEGER:\n\tInner (black) border width\n");
+  printf(" -f INTEGER\n\tInner (black) border width\n");
   printf("\tdefault: %d\n\n", p->ibord);
 
-  printf(" -g INTEGER:\n\tOuter (white) border width\n");
-  printf("\tdefault: %d\n\n\n", p->obord);
+  printf(" -g INTEGER\n\tOuter (white) border width\n");
+  printf("\tdefault: %d\n\n", p->obord);
+
+  printf(" -r from_1:to_1,from_2:to_2,...,from_N:to_N\n");
+  printf("\tConvert \"from\" to \"to\".\n");
+  printf("\tThis is usually not needed in astronomical images.\n");
+  printf("\tBut can be useful if segmentation maps, or images\n");
+  printf("\tthat keep labels or defined regions are input.\n");
+  printf("\tIn such cases, a group of pixels have one label or\n");
+  printf("\tvalue and this option might come in handy.\n");
+  printf("\tConversion happens after trunctation, before log.\n");
+  printf("\tThe order of conversion is the opposite of input orer.\n");
+  printf("\tNote that no spaces must be used any where in\n");
+  printf("\tthe argument\n");
+  printf("\tdefault: Convert nothing!\n\n\n");
 
   exit(EXIT_SUCCESS);
+}
+
+
+
+
+
+struct conversion *
+makeconvstruct(char *arg, int opt)
+{
+  char *p=arg;
+  struct conversion *out=NULL, *c;
+
+  while(*p!='\0')
+    {
+      assert( (c=malloc(sizeof *c))!=NULL);
+      c->from=strtof(p, &p);
+      if(*p==':') p++;
+      else
+	{
+	  printf("\n\nError in argument to '-%c':\n", opt);
+	  printf("\t[from] and [to] values should be ");
+	  printf("separated by a ':'.\n"); 
+	  printf("\tYou have provided a '%c': \t%s\n\n\n", *p, arg);
+	  exit(EXIT_FAILURE);
+	}
+      c->to=strtof(p, &p);
+      if(*p==',') p++;
+      else if(*p!='\0')
+	{
+	  printf("\n\nError in argument to %c:\n", opt);
+	  printf("[from] and [to] pairs should be ");
+	  printf("separated by a ','.\n"); 
+	  printf("\tYou have provided a '%c': \t%s\n\n\n", *p, arg);
+	  exit(EXIT_FAILURE);
+	}
+      c->next=out;
+      out=c;
+    }
+  return out;
 }
 
 
@@ -272,7 +342,7 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
   if(argc==1)
     printhelp(p);
 
-  while( (c=getopt(argc, argv, "hvltbanc:e:o:i:w:p:q:f:g:")) != -1 )
+  while( (c=getopt(argc, argv, "hvltbanc:e:o:i:w:p:q:f:g:r:")) != -1 )
     switch(c)
       {
       case 'h':			/* Print help. */
@@ -333,8 +403,11 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
       case 'g':			/* Outer border. */
 	checkint(optarg, &p->obord, c);
 	break;
+      case 'r':			/* Convert pixel values */
+	p->conv=makeconvstruct(optarg, c);
+	break;
       case '?':
-	fprintf(stderr, "Unknown option: '-%c'.\n\n", optopt);
+	fprintf(stderr, "\nUnknown option: '-%c'.\n\n", optopt);
 	exit(EXIT_FAILURE);
       default:
 	abort();

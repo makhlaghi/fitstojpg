@@ -36,6 +36,9 @@ void
 findnamebase(char *inname, char **out);
 
 void
+freeconvstruct(struct conversion *c);
+
+void
 getsaveoptions(struct a2jparams *p, int argc, char *argv[]);
 
 #endif

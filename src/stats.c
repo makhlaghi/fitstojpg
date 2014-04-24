@@ -215,6 +215,68 @@ doubleminpos(double *in, size_t size, double *min)
 
 
 
+/*************************************************************
+ ***********        Converting pixel values        ***********
+ *************************************************************/
+#define SIMILARCONV {					   \
+    struct conversion *t;				   \
+    fpt=in+size;					   \
+    for(t=p;t!=NULL;t=t->next)				   \
+      {							   \
+	from=t->from;					   \
+	to=t->to;					   \
+	pt=in;						   \
+	do{if(*pt==from) *pt=to;} while(++pt<fpt);	   \
+      }							   \
+}
+void
+convuc(struct conversion *p, unsigned char *in, size_t size)
+{
+  unsigned char *pt, *fpt, from, to;
+  SIMILARCONV;
+}
+void
+convs(struct conversion *p, short *in, size_t size)
+{
+  short *pt, *fpt, from, to;
+  SIMILARCONV;
+}
+void
+convl(struct conversion *p, long *in, size_t size)
+{
+  long *pt, *fpt, from, to;
+  SIMILARCONV;
+}
+void
+convf(struct conversion *p, float *in, size_t size)
+{
+  float *pt, *fpt, from, to;
+  SIMILARCONV;
+}
+void
+convd(struct conversion *p, double *in, size_t size)
+{
+  double *pt, *fpt, from, to;
+  SIMILARCONV;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*************************************************************
  ***********             Find the log              ***********

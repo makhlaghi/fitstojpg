@@ -34,6 +34,13 @@ along with fits2jpg. If not, see <http://www.gnu.org/licenses/>.
 #define DOUBLE_IMG    -64
 
 
+/* This is used in converting certain values in the array. */
+struct conversion
+{
+  float from;
+  float to;
+  struct conversion *next;
+};
 
 
 
@@ -57,6 +64,7 @@ struct a2jparams
   float high;			/* Higher pixel value truncation. */
   int   ibord;		        /* Inner border (black) width. */
   int   obord;	        	/* Outer border (White) width. */
+  struct conversion *conv;	/* Structure to define conversion. */
 
   /* Internal options: */
   int freeoutname;		/* Free the outname or not? */
