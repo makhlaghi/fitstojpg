@@ -281,9 +281,9 @@ printhelp(struct a2jparams *p)
   printf("\tIn such cases, a group of pixels have one label or\n");
   printf("\tvalue and this option might come in handy.\n");
   printf("\tConversion happens after trunctation, before log.\n");
-  printf("\tThe order of conversion is the opposite of input orer.\n");
-  printf("\tNote that no spaces must be used any where in\n");
-  printf("\tthe argument\n");
+  printf("\tThe order of conversion is the opposite of input order.\n");
+  printf("\tNote that no spaces must be used any where in ");
+  printf("the argument\n");
   printf("\tdefault: Convert nothing!\n\n\n");
 
   exit(EXIT_SUCCESS);
