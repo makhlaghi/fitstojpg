@@ -40,18 +40,25 @@ along with fits2jpg. If not, see <http://www.gnu.org/licenses/>.
 /* Structure to define the inputs into float2jpg. */
 struct a2jparams
 {
+  /* On/Off options: */
+  int   inv;			/* Inverse grayscale image. */
+  int   allext;			/* Convert all extensions to JPEG. */
+  int   log;			/* Logarithmic or not. */
+  int   ttrunccolor;            /* High truncation as max color. */
+  int   btrunccolor;		/* Low truncation as min color. */
+
+  /* Options with arguments: */
   char *inname;			/* Name of input. */
   char *outname;		/* Name of output. */
   char  color;			/* c: CMYK. g: Grayscale. */
-  int   inv;			/* Inverse grayscale image. */
-  int   allext;			/* Convert all extensions to JPEG. */
   int   ext;			/* Extention of FITS image. */
   float width;			/* Width of image in cm. */
   float low;			/* Lower pixel value trunctation. */
   float high;			/* Higher pixel value truncation. */
-  float log;			/* Logarithmic or not. */
   int   ibord;		        /* Inner border (black) width. */
   int   obord;	        	/* Outer border (White) width. */
+
+  /* Internal options: */
   int freeoutname;		/* Free the outname or not? */
 };
 

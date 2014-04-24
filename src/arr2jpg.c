@@ -162,36 +162,55 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 
 
 
-
 /*************************************************************
  ***********     function body for all types       ***********
  *************************************************************/
+/* 
+   This only happens if ttrunccolor or btrunccolor are on.  In this
+   case, the user has probably given truncation values lower and
+   higher than the actual image range in order to set the color scale
+   (make the image not have pure black or white).
+
+   Note that because truncation was applied before this step,
+   max<=p->high and min>=p->low. So all we have to do is change their
+   values to the user input high and low values.*/
+#define ADJUSTMINMAXTRUNC {			                \
+  if(p->low!=p->high && p->ttrunccolor)				\
+    max=p->high;						\
+  if(p->low!=p->high && p->btrunccolor)				\
+    min=p->low;							\
+}
+
 
 #define FILLJSARRBODY {				                \
-  if(p->color=='g')                                             \
-    {                                                           \
-      if(p->inv)                                                \
-	for(i=0;i<size;i++)                                     \
-	  jsr[i]=UCHAR_MAX-(arr[i]-min)*m;                      \
-      else                                                      \
-	for(i=0;i<size;i++)                                     \
-	  jsr[i]=(arr[i]-min)*m;                                \
-    }                                                           \
-  else                                                          \
-    {                                                           \
-      if(p->inv)				                \
-	for(i=0;i<size;i++)			                \
-	  {					                \
-	    jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;		\
-	    jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	      	\
-	  }                                                     \
-      else							\
-	for(i=0;i<size;i++)			                \
-	  {					                \
-	    jsr[i*4+3]=(arr[i]-min)*m;		                \
-	    jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	        \
-	  }					        	\
-    }                                                           \
+								\
+    ADJUSTMINMAXTRUNC;						\
+								\
+    m=(double)UCHAR_MAX/((double)max-(double)min);		\
+    if(p->color=='g')						\
+      {								\
+	if(p->inv)						\
+	  for(i=0;i<size;i++)					\
+	    jsr[i]=UCHAR_MAX-(arr[i]-min)*m;			\
+	else							\
+	  for(i=0;i<size;i++)					\
+	    jsr[i]=(arr[i]-min)*m;				\
+      }								\
+    else							\
+      {								\
+	if(p->inv)				                \
+	  for(i=0;i<size;i++)			                \
+	    {					                \
+	      jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;		\
+	      jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	      	\
+	    }							\
+	else							\
+	  for(i=0;i<size;i++)			                \
+	    {					                \
+	      jsr[i*4+3]=(arr[i]-min)*m;			\
+	      jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	        \
+	    }					        	\
+      }								\
   }                                             
 
 
@@ -199,54 +218,59 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 
 
 #define FILLJSARRAYWITHBORDBODY {                               \
-  ib=p->ibord;                                                  \
-  ob=p->obord;                                                  \
-  o=ib+ob;                                                      \
-  ns0=s0+2*o;                                                   \
-  ns1=s1+2*o;                                                   \
+								\
+    ib=p->ibord;						\
+    ob=p->obord;						\
+    o=ib+ob;							\
+    ns0=s0+2*o;							\
+    ns1=s1+2*o;							\
+								\
+    ADJUSTMINMAXTRUNC;						\
+								\
+    m=(double)UCHAR_MAX/((double)max-(double)min);		\
                                                                 \
-  if(p->color=='g')                                             \
-    {                                                           \
-      if(p->inv)                                                \
-	for(i=0;i<s0;i++)                                       \
-	  for(j=0;j<s1;j++)                                     \
-	    jsr[(i+o)*ns1+j+o]=UCHAR_MAX-(arr[i*s1+j]-min)*m;   \
-      else                                                      \
-	for(i=0;i<s0;i++)                                       \
-	  for(j=0;j<s1;j++)                                     \
-	    jsr[(i+o)*ns1+j+o]=(arr[i*s1+j]-min)*m;             \
-      /* Add border: */                                         \
-      if(ob==0) return;                                         \
-      for(i=0;i<ns0;i++)                                        \
-	for(j=0;j<ns1;j++)                                      \
+    if(p->color=='g')						\
+      {								\
+	if(p->inv)						\
+	  for(i=0;i<s0;i++)					\
+	    for(j=0;j<s1;j++)					\
+	      jsr[(i+o)*ns1+j+o]=UCHAR_MAX-(arr[i*s1+j]-min)*m;	\
+	else							\
+	  for(i=0;i<s0;i++)					\
+	    for(j=0;j<s1;j++)					\
+	      jsr[(i+o)*ns1+j+o]=(arr[i*s1+j]-min)*m;		\
+	/* Add border: */					\
+	if(ob==0) return;					\
+	for(i=0;i<ns0;i++)					\
+	  for(j=0;j<ns1;j++)					\
 	    if(i<ob || i>=ns0-ob || j<ob || j>=ns1-ob)          \
 	      jsr[i*ns1+j]=UCHAR_MAX;                           \
-    }                                                           \
-  else                                                          \
-    {                                                           \
-      if(p->inv)                                                \
-	for(i=0;i<s0;i++)					\
-	  for(j=0;j<s1;j++)					\
-	    {							\
-	      start=((i+o)*ns1+j+o)*4;				\
-	      jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;       \
-	    }							\
-      else                                                      \
-	for(i=0;i<s0;i++)					\
-	  for(j=0;j<s1;j++)					\
-	    {							\
-	      start=((i+o)*ns1+j+o)*4;				\
-	      jsr[start+3]=(arr[i*s1+j]-min)*m;			\
-	    }							\
-      /* Add border: */						\
-      if(ob==0) return;                                         \
-      for(i=0;i<ns0;i++)                                        \
-	for(j=0;j<ns1;j++)                                      \
-	  if( (i>=ob && i<o) || (i>=ns0-o && i<ns0-ob) ||	\
-	      (j>=ob && j<o) || (j>=ns1-o && j<ns1-ob) )	\
-	    if(i>=ob && i<ns0-ob && j>=ob && j<ns1-ob)		\
-	      jsr[(i*ns1+j)*4+3]=0;				\
-    }                                                           \
+      }								\
+    else							\
+      {								\
+	if(p->inv)						\
+	  for(i=0;i<s0;i++)					\
+	    for(j=0;j<s1;j++)					\
+	      {							\
+		start=((i+o)*ns1+j+o)*4;			\
+		jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;	\
+	      }							\
+	else							\
+	  for(i=0;i<s0;i++)					\
+	    for(j=0;j<s1;j++)					\
+	      {							\
+		start=((i+o)*ns1+j+o)*4;			\
+		jsr[start+3]=(arr[i*s1+j]-min)*m;		\
+	      }							\
+	/* Add border: */					\
+	if(ob==0) return;					\
+	for(i=0;i<ns0;i++)					\
+	  for(j=0;j<ns1;j++)					\
+	    if( (i>=ob && i<o) || (i>=ns0-o && i<ns0-ob) ||	\
+		(j>=ob && j<o) || (j>=ns1-o && j<ns1-ob) )	\
+	      if(i>=ob && i<ns0-ob && j>=ob && j<ns1-ob)	\
+		jsr[(i*ns1+j)*4+3]=0;				\
+      }								\
   }
 
 
@@ -281,7 +305,6 @@ bytefilljsarr(JSAMPLE *jsr, unsigned char *arr, size_t s0, size_t s1,
   size_t i, j, start, o, ns0, ns1;
 
   ucminmax(arr, s0*s1, &min, &max);
-  m=(double)UCHAR_MAX/((double)max-(double)min);
 
   size=s0*s1;
   if(p->ibord==0 && p->obord==0)
@@ -304,7 +327,6 @@ shortfilljsarr(JSAMPLE *jsr, short *arr, size_t s0, size_t s1,
   size_t i, j, start, o, ns0, ns1;
 
   shortminmax(arr, s0*s1, &min, &max);
-  m=(double)UCHAR_MAX/((double)max-(double)min);
 
   size=s0*s1;
   if(p->ibord==0 && p->obord==0)
@@ -327,7 +349,6 @@ longfilljsarr(JSAMPLE *jsr, long *arr, size_t s0, size_t s1,
   size_t i, j, start, o, ns0, ns1;
 
   longminmax(arr, s0*s1, &min, &max);
-  m=(double)UCHAR_MAX/((double)max-(double)min);
 
   size=s0*s1;
   if(p->ibord==0 && p->obord==0)
@@ -350,7 +371,6 @@ floatfilljsarr(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
   size_t i, j, start, o, ns0, ns1;
 
   floatminmax(arr, s0*s1, &min, &max);
-  m=(double)UCHAR_MAX/((double)max-(double)min);
 
   size=s0*s1;
   if(p->ibord==0 && p->obord==0)
@@ -373,7 +393,6 @@ doublefilljsarr(JSAMPLE *jsr, double *arr, size_t s0, size_t s1,
   size_t i, j, start, o, ns0, ns1;
 
   doubleminmax(arr, s0*s1, &min, &max);
-  m=(double)UCHAR_MAX/((double)max-(double)min);
 
   size=s0*s1;
   if(p->ibord==0 && p->obord==0)

@@ -53,6 +53,13 @@ On/Off options:
 	viewing astronomical images where a large number of 
 	pixels are sky noise.
 * `-a`: Convert all extentions in a multiextention FITS image.
+* `-t`: Set the top truncation pixel value as the highest pixel 
+        color (darkest by default or brightest if `-n` is 
+        called) pixel value.
+* `-b`: Similar to `-t` but for the lower truncation radius being
+        the lowest pixel color (brightest by default and darkest
+        if `-n` is called. With this and `-b` you can manually
+        set the color scale of the image.
 
 Options that require arguments:
 * `-i`: Input FITS filename.

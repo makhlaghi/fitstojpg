@@ -42,19 +42,25 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 void
 setdefaultoptions(struct a2jparams *p)
 {
-  p->log=0;
-  p->inv=1;   /* Invert greyscale image by default. */
-  p->allext=0;
+  /* On/Off options: */
+  p->log         =0;
+  p->inv         =1; 
+  p->allext      =0;
+  p->ttrunccolor =0;
+  p->btrunccolor =0;
 
-  p->inname="a.fits";
-  p->freeoutname=1;  /* We'll assume the user doesn't give any */
-  p->color='c';
-  p->ext=0;
-  p->width=5.0f;
-  p->low=0.0f;
-  p->high=0.0f;
-  p->ibord=1;
-  p->obord=1;
+  /* Options with arguments. */
+  p->inname      ="a.fits";
+  p->color       ='c';
+  p->ext         =0;
+  p->width       =5.0f;
+  p->low         =0.0f;
+  p->high        =0.0f;
+  p->ibord       =1;
+  p->obord       =1;
+
+  /* For internal use: */
+  p->freeoutname =1;  /* We'll assume the user doesn't give any */
 }
 
 
@@ -190,22 +196,33 @@ printhelp(struct a2jparams *p)
 {
   printversioninfo();
   printf("####### Options that won't run 'fits2jpg'.\n");
-  printf(" -h:\n\tPrint this command and abort.\n\n");
-  printf(" -v:\n\tPrint only version and copyright information.\n\n\n");
+  printf(" -h:\tPrint this command and abort.\n\n");
+  printf(" -v:\tPrint only version and copyright information.\n\n\n");
 
   printf("####### Options without arguments (On or Off):\n");
   printf("By default all are off\n");
-  printf(" -n:\n\tDon't inverse the image.\n");
+  printf(" -n:\tDon't inverse the image.\n");
   printf("\tBy default all images are inverted:\n");
   printf("\ta larger pixel value is translated to darker colors.\n");
   printf("\tThis is better for Astronomical objects with \n");
   printf("\ta large area covered by the sky.\n\n");
 
-  printf(" -a:\n\tConvert all extentions to JPEG.\n");
+  printf(" -a:\tConvert all extentions to JPEG.\n");
   printf("\tThe extention numbers will be appended to \n"); 
   printf("\tthe JPEG names for each extention.\n\n");
 
-  printf(" -l:\n\tLogarithmic scaling.\n\n\n");
+  printf(" -l:\tLogarithmic scaling.\n\n");
+
+  printf(" -t:\tSet the top truncation to the max color.\n");
+  printf("\tBy default max color is black. If `-n` option is\n");
+  printf("\tgiven it is white.\n\n");
+
+  printf(" -b:\tSet the bottom (lower) truncation to ");
+  printf("the minimum color.\n");
+  printf("\tBy default min color is white. If `-n` option is\n");
+  printf("\tgiven it is black.\n\n\n");
+
+
 
   printf("####### Options with arguments:\n");
   printf(" -i FILENAME:\n\tInput FITS image name.\n\n");
@@ -255,23 +272,30 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
   if(argc==1)
     printhelp(p);
 
-  while( (c=getopt(argc, argv, "lhvanc:e:o:i:w:p:q:f:g:")) != -1 )
+  while( (c=getopt(argc, argv, "hvltbanc:e:o:i:w:p:q:f:g:")) != -1 )
     switch(c)
       {
-      /* Options with no arguments: */
-      case 'l':			/* Logarithmic scaling. */
-	p->log=1;
-	break;
       case 'h':			/* Print help. */
 	printhelp(p);
       case 'v':			/* Print version. */
 	printversioninfo();
 	exit(EXIT_SUCCESS);
+
+      /* Options with no arguments: */
+      case 'l':			/* Logarithmic scaling. */
+	p->log=1;
+	break;
       case 'a':			/* Convert all extentions. */
 	p->allext=1;
 	break;
       case 'n':			/* Logarithmic scaling. */
 	p->inv=0;
+	break;
+      case 't':			/* Top truncation to max color. */
+	p->ttrunccolor=1;
+	break;
+      case 'b':			/* Bottom truncation to min color. */
+	p->btrunccolor=1;
 	break;
 
       /* Options with arguments: */
