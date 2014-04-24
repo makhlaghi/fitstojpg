@@ -20,10 +20,11 @@ Why CMYK?
 The major advantage in saving in the CMYK color space is in printing.
 So if you don't want to ultimately print the image, it doesn't really
 matter that much. But if you do want to print your FITS image in a
-report or a paper, there is a big difference. Also some journals
-require the colors space of the images used to be CMYK. Most color
-printers use Cyan-Magenta-Yellow and Key (black) ink cartridges to do
-color printing. A FITS image only has one value per pixel, so it is
+report or a paper, there is a big difference and we strongly recommend
+you to save the output as CMYK. Also some journals require the colors
+space of the images used to be CMYK. Most color printers use
+Cyan-Magenta-Yellow and Key (black) ink cartridges to do color
+printing. A FITS image only has one value per pixel, so it is
 essentially a greyscale image.
 
 When you send a grey scale image into a color printer, most printers
