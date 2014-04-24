@@ -42,7 +42,7 @@ the right is a CMYK JPEG image with only the K channel used.  I have
 taken a screen shot of how the two images compare when I included then
 in a LaTeX document and viewed them on my desktop monitor.
 
-<img src="https://raw.github.com/makhlaghi/fits2jpg/master/doc/fits2jpg-figures/grey_CMYK_comp.jpg" width=600/>
+<img src="https://raw.githubusercontent.com/makhlaghi/fits2jpg/master/doc/fits2jpg-figures/grey_CMYK_comp.png" width=600/>
 
 In print the ouputs are very similar. You see that the shades of grey
 in the left image (greyscale) are slightly more darker with a higher
