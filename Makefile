@@ -9,14 +9,14 @@ CC=gcc
 CFLAGS=-Wall -W -O -pedantic -I$(src)
 LDLIBS=-lcfitsio -pthread -ljpeg -lm
 
-fits2jpg: $(objects) 
-	@$(CC) -o fits2jpg $(objects) $(LDLIBS) 
+fitstojpg: $(objects) 
+	@$(CC) -o fitstojpg $(objects) $(LDLIBS) 
 	@rm *.o
-#	./fits2jpg -ia.fits
+#	./fitstojpg -ia.fits
 
 .SILENT: $(objects)
 
 .PHONY: install
 
 install:
-	cp ./fits2jpg /usr/local/bin/
+	cp ./fitstojpg /usr/local/bin/

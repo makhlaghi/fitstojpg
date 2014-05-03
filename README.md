@@ -1,4 +1,4 @@
-fits2jpg
+fitstojpg
 =========
 
 Convert a FITS image to a grayscale or CMYK JPEG image.
@@ -43,7 +43,7 @@ the right is a CMYK JPEG image with only the K channel used.  I have
 taken a screen shot of how the two images compare when I included then
 in a LaTeX document and viewed them on my desktop monitor.
 
-<img src="https://raw.githubusercontent.com/makhlaghi/fits2jpg/master/doc/fits2jpg-figures/grey_CMYK_comp.png" width=600/>
+<img src="https://raw.githubusercontent.com/makhlaghi/fitstojpg/master/doc/fitstojpg-figures/grey_CMYK_comp.png" width=600/>
 
 In print the ouputs are very similar. You see that the shades of grey
 in the left image (greyscale) are slightly more darker with a higher
@@ -59,7 +59,7 @@ if you want to convert to CMYK and also prints better.
 
 Requirements:
 ------------
-`fits2jpg` requires two packages to be installed on your
+`fitstojpg` requires two packages to be installed on your
 machine, installing them is easy and straightforward. 
 
 - [IJG's libjpeg](http://www.ijg.org/), which should already be
@@ -72,15 +72,15 @@ machine, installing them is easy and straightforward.
 Installing and running:
 ------------
  
-To install `fits2jpg`, after downloading or cloning it, all you have
+To install `fitstojpg`, after downloading or cloning it, all you have
 to do is to run `make` in the downloaded directory. In order to be
-able to run `fits2jpg` from anywhere on your system, run `make
+able to run `fitstojpg` from anywhere on your system, run `make
 install` as root after the installation finishes.
 
 Some command line options can be given so you can customize the
-output, to learn them, run `./fits2jpg -h`.  A full list of all the
+output, to learn them, run `./fitstojpg -h`.  A full list of all the
 options with some explanation and their default values will be shown.
-Nealy all the operation of `fits2jpg` can be defined by these input
+Nealy all the operation of `fitstojpg` can be defined by these input
 options and their arguments.  The [POSIX argument syntax
 conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax) apply.
 
@@ -125,7 +125,7 @@ Future updates and issues:
 Comments and suggestions:
 ----------------------------------------
 
-I hope `fits2jpg` will be useful for you. If you find any problems in
+I hope `fitstojpg` will be useful for you. If you find any problems in
 this program please contact me so I can correct them. I would also be
 very glad to hear any suggestions or comments you might have, thank
 you.
@@ -145,15 +145,15 @@ Tohoku University Astronomical Institute
 
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-`fits2jpg` is free software: you can redistribute it and/or modify
+`fitstojpg` is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-`fits2jpg` is distributed in the hope that it will be useful,
+`fitstojpg` is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with `fits2jpg`.  If not, see <http://www.gnu.org/licenses/>.
+along with `fitstojpg`.  If not, see <http://www.gnu.org/licenses/>.

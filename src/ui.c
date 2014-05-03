@@ -1,23 +1,23 @@
 /*********************************************************************
-mockgals - Make mock astronomical profiles (galaxy, star, ...) 
+fitstojpg - Make mock astronomical profiles (galaxy, star, ...) 
            in a FITS file
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-mockgals is free software: you can redistribute it and/or modify
+fitstojpg is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-mockgals is distributed in the hope that it will be useful,
+fitstojpg is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mockgals. If not, see <http://www.gnu.org/licenses/>.
+along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
 #include <stdio.h>
@@ -221,13 +221,13 @@ checkintlimit(char *optarg, int *var, int opt,
 void
 printversioninfo()
 {
-  printf("\n\nfits2jpg %.1f\n", FITS2JPGVERSION);
+  printf("\n\nfitstojpg %.1f\n", FITSTOJPGVERSION);
   printf("============\n");
   printf("Convert a FITS image to a grayscale or CMYK JPEG image.\n");
   printf("\nCopyright (C) 2014  Mohammad Akhlaghi\n");
   printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
   printf("This is free software, and you are welcome to\n");
-  printf("redistribute it under the ");
+  printf("modify and redistribute it under the ");
   printf("GNU Public License v3 or later.\n\n\n");
 }
 
@@ -240,7 +240,7 @@ void
 printhelp(struct a2jparams *p)
 {
   printversioninfo();
-  printf("####### Options that won't run 'fits2jpg'.\n");
+  printf("####### Options that won't run 'fitstojpg'.\n");
   printf(" -h:\tPrint this command and abort.\n\n");
   printf(" -v:\tPrint only version and copyright information.\n\n\n");
 
