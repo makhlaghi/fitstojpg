@@ -321,6 +321,7 @@ farrlog(float *in, size_t size)
 {
   float minpos, *fpt, forneg;
   floatminpos(in, size, &minpos);
+  minpos-=minpos*0.1;
   SIMILARLOG
 }
 void
@@ -328,5 +329,6 @@ darrlog(double *in, size_t size)
 {
   double minpos, *fpt, forneg;
   doubleminpos(in, size, &minpos);
+  minpos-=minpos*0.1;
   SIMILARLOG
 }
