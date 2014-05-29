@@ -311,6 +311,18 @@ printhelp(struct a2jparams *p)
   printf(" -g INTEGER\n\tOuter (white) border width\n");
   printf("\tdefault: %d\n\n", p->obord);
 
+  printf(" -j INTEGER\n\tCrop box Bottom Left position.\n"
+	 "\tHorizontal, First FITS axis\n\n");
+
+  printf(" -k INTEGER\n\tCrop box Bottom Left position.\n"
+	 "\tVertial, Second FITS axis.\n\n");
+
+  printf(" -s INTEGER\n\tCrop box Top Right position.\n"
+	 "\tHorizontal, First FITS axis\n\n");
+
+  printf(" -y INTEGER\n\tCrop box Top Right position.\n"
+	 "\tVertial, Second FITS axis.\n\n");
+
   printf(" -r from_1:to_1,from_2:to_2,...,from_N:to_N\n");
   printf("\tConvert \"from\" to \"to\".\n");
   printf("\tThis is usually not needed in astronomical images.\n");
