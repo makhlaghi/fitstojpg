@@ -65,6 +65,10 @@ struct a2jparams
   float high;			/* Higher pixel value truncation. */
   int   ibord;		        /* Inner border (black) width. */
   int   obord;	        	/* Outer border (White) width. */
+  int  x0;			/* Crop Bottom left corner x axis. */
+  int  y0;			/* Crop Bottom left corner y axis. */
+  int  x1;			/* Crop Top right corner x axis. */
+  int  y1;			/* Crop Top right corner y axis. */
   struct conversion *conv;	/* Structure to define conversion. */
 
   /* Internal options: */

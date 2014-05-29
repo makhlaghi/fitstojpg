@@ -29,7 +29,9 @@ along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 #include "ui.h"
 #include "stats.h"
 #include "main.h"
+#include "arraymanip.h"
 #include "fitsarrayvv.h"
+
 
 
 
@@ -63,6 +65,7 @@ main(int argc, char *argv[])
 
 
 
+/* To only convert one extention in JPEG. */
 void
 convertoneext(struct a2jparams *p)
 {
@@ -72,6 +75,20 @@ convertoneext(struct a2jparams *p)
 
   fits_to_array(p->inname, p->ext, &bitpix, &arr, &s0, &s1);
   checkremoveoutimage(p->outname);   /* ui.c */
+  if(p->x0!=0 || p->y0!=0 || p->x1!=0 || p->y1!=0)
+    {
+      shrinkarray(&arr, bitpix, s0, s1, p->x0, p->y0, p->x1, p->y1);
+      if(!arr) /* If the region is out of the image */
+	{
+	  printf("\n\nWarning: the cropped region (%d, %d)-(%d,%d)"
+		 "was out of the image range (%lu, %lu).\n", 
+		 p->y0+1, p->x0+1, p->y1+1, p->x1+1, s1, s0);
+	  printf("No JPEG image created\n\n");
+	  return;
+	}
+      s0=p->x1-p->x0;
+      s1=p->y1-p->y0;
+    }
   arr2jpg(arr, s0, s1, bitpix, p);   /* arr2jpg.c */
   
   free(arr);
@@ -81,6 +98,7 @@ convertoneext(struct a2jparams *p)
 
 
 
+/* To convert all extentions to JPEG. */
 void
 convertallext(struct a2jparams *p)
 {

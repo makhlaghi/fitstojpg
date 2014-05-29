@@ -1,6 +1,6 @@
 src=./src
 
-objects=main.o ui.o fitsarrayvv.o arr2jpg.o stats.o
+objects=main.o ui.o fitsarrayvv.o arr2jpg.o stats.o arraymanip.o
 
 vpath %.h $(src)
 vpath %.c $(src)
@@ -12,7 +12,7 @@ LDLIBS=-lcfitsio -pthread -ljpeg -lm
 fitstojpg: $(objects) 
 	@$(CC) -o fitstojpg $(objects) $(LDLIBS) 
 	@rm *.o
-#	./fitstojpg -ia.fits
+	./fitstojpg -ia.fits -j70 -k70 -s140 -y140
 
 .SILENT: $(objects)
 

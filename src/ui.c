@@ -60,6 +60,10 @@ setdefaultoptions(struct a2jparams *p)
   p->ibord       =1;
   p->obord       =1;
   p->conv        =NULL;
+  p->x0          =0;
+  p->y0          =0;
+  p->x1          =0;
+  p->y1          =0;
 
   /* For internal use: */
   p->freeoutname =1;  /* We'll assume the user doesn't give any */
@@ -172,7 +176,7 @@ freeconvstruct(struct conversion *c)
 /****************************************************************
  *****************        Read options:      ********************
  ****************************************************************/
-/* Check if an integer input is positive. */
+/* Check if an integer input is positive (>=0). */
 void
 checkint(char *optarg, int *var, int opt)
 {
@@ -370,13 +374,14 @@ makeconvstruct(char *arg, int opt)
 void
 getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 {
-  int c;
+  int c, tmp;
   char *tailptr;
 
   if(argc==1)
     printhelp(p);
 
-  while( (c=getopt(argc, argv, "hvltbanc:e:o:i:w:p:q:f:g:r:u:")) != -1 )
+  while( (c=getopt(argc, argv, 
+		   "hvltbanc:e:o:i:w:p:q:f:g:r:u:j:k:s:y:")) != -1 )
     switch(c)
       {
       case 'h':			/* Print help. */
@@ -442,6 +447,22 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 	break;
       case 'r':			/* Convert pixel values */
 	p->conv=makeconvstruct(optarg, c);
+	break;
+      case 'j':			/* Crop Bottom left corner x axis. */
+	checkint(optarg, &tmp, c);
+	p->y0=tmp-1;
+	break;
+      case 'k':			/* Crop Bottom left corner y axis. */
+	checkint(optarg, &tmp, c);
+	p->x0=tmp-1;
+	break;
+      case 's':			/* Crop Top right corner x axis. */
+	checkint(optarg, &tmp, c);
+	p->y1=tmp-1;
+	break;
+      case 'y':			/* Crop Top right corner y axis. */	
+	checkint(optarg, &tmp, c);
+	p->x1=tmp-1;
 	break;
       case '?':
 	fprintf(stderr, "\nUnknown option: '-%c'.\n\n", optopt);
