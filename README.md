@@ -114,6 +114,10 @@ Options that require arguments:
 * `-q`: Higher truncation pixel value.
 * `-f`: Width of black inner border in pixels.
 * `-g`: Width of white outer border in pixels.
+* `-j`: Crop: bottom left corner position (horizontal position).
+* `-k`: Crop: bottom left corner position (vertical position).
+* `-s`: Crop: top right corner position (horizontal position).
+* `-y`: Crop: top right corner position (vertical position).
 * `-r`: Convert pixel values.
 
 Future updates and issues:
