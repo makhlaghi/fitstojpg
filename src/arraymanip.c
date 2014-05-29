@@ -169,7 +169,7 @@ longshrinkarray(long **in, int size1, int size2,
 	*ofpt++=*ifpt++;
  
     }      
-  *in=(long *)realloc(*in, w1*w2*sizeof(float));
+  *in=(long *)realloc(*in, w1*w2*sizeof(long));
   assert(*in!=NULL);    
 }
 
