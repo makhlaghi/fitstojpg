@@ -48,31 +48,32 @@ struct conversion
 struct a2jparams
 {
   /* On/Off options: */
-  int   inv;			/* Inverse grayscale image. */
-  int   allext;			/* Convert all extensions to JPEG. */
-  int   log;			/* Logarithmic or not. */
-  int   ttrunccolor;            /* High truncation as max color. */
-  int   btrunccolor;		/* Low truncation as min color. */
+  int                 inv;      /* Inverse grayscale image.            */
+  int              allext;      /* Convert all extensions to JPEG.     */
+  int                 log;	/* Logarithmic or not.                 */
+  int         ttrunccolor;      /* High truncation as max color.       */
+  int         btrunccolor;	/* Low truncation as min color.        */
 
   /* Options with arguments: */
-  char *inname;			/* Name of input. */
-  char *outname;		/* Name of output. */
-  char  color;			/* c: CMYK. g: Grayscale. */
-  int   quality;		/* Quality of JPEG compression. */
-  int   ext;			/* Extention of FITS image. */
-  float width;			/* Width of image in cm. */
-  float low;			/* Lower pixel value trunctation. */
-  float high;			/* Higher pixel value truncation. */
-  int   ibord;		        /* Inner border (black) width. */
-  int   obord;	        	/* Outer border (White) width. */
-  int  x0;			/* Crop Bottom left corner x axis. */
-  int  y0;			/* Crop Bottom left corner y axis. */
-  int  x1;			/* Crop Top right corner x axis. */
-  int  y1;			/* Crop Top right corner y axis. */
-  struct conversion *conv;	/* Structure to define conversion. */
+  char            *inname;	/* Name of input.                      */
+  char           *outname;	/* Name of output.                     */
+  char              color;	/* c: CMYK. g: Grayscale.              */
+  int             quality;	/* Quality of JPEG compression.        */
+  int                 ext;	/* Extention of FITS image.            */
+  float             width;	/* Width of image in cm.               */
+  float               low;	/* Lower pixel value trunctation.      */
+  float              high; 	/* Higher pixel value truncation.      */
+  unsigned char    maxbyt;	/* Maximum BYTE value to use in image. */
+  int               ibord;      /* Inner border (black) width.         */
+  int               obord;     	/* Outer border (White) width.         */
+  int                  x0;	/* Crop Bottom left corner x axis.     */
+  int                  y0;	/* Crop Bottom left corner y axis.     */
+  int                  x1;	/* Crop Top right corner x axis.       */
+  int                  y1;	/* Crop Top right corner y axis.       */
+  struct conversion *conv;	/* Structure to define conversion.     */
 
   /* Internal options: */
-  int freeoutname;		/* Free the outname or not? */
+  int         freeoutname;	/* Free the outname or not?            */
 };
 
 

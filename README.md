@@ -112,6 +112,7 @@ Options that require arguments:
 * `-c`: Color space (grayscale or CMYK).
 * `-p`: Lower truncation pixel value.
 * `-q`: Higher truncation pixel value.
+* `-d`: Maximum byte value in output JPEG: [0-255].
 * `-f`: Width of black inner border in pixels.
 * `-g`: Width of white outer border in pixels.
 * `-j`: Crop: bottom left corner position (horizontal position).

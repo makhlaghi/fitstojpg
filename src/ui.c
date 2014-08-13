@@ -21,6 +21,7 @@ along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
 #include <stdio.h>
+#include <limits.h>
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -57,8 +58,9 @@ setdefaultoptions(struct a2jparams *p)
   p->width       =5.0f;
   p->low         =0.0f;
   p->high        =0.0f;
-  p->ibord       =1;
-  p->obord       =1;
+  p->maxbyt      =UCHAR_MAX;
+  p->ibord       =0;
+  p->obord       =0;
   p->conv        =NULL;
   p->x0          =0;
   p->y0          =0;
@@ -205,13 +207,13 @@ checkintlimit(char *optarg, int *var, int opt,
   tmp=strtol(optarg, &tailptr, 0);
   if(tmp<llimit)
     {
-      printf("\n\n Error: argument to -%c ", opt); 
+      printf("\n\n Error: argument to `-%c` ", opt); 
       printf("should be larger than %d\n\n", llimit);
       exit(EXIT_FAILURE);
     }
   if(tmp>hlimit)
     {
-      printf("\n\n Error: argument to -%c ", opt); 
+      printf("\n\n Error: argument to `-%c` ", opt); 
       printf("should be smaller than %d\n\n", hlimit);
       exit(EXIT_FAILURE);
     }
@@ -305,6 +307,10 @@ printhelp(struct a2jparams *p)
   printf("\tIf equal to lower, no truncation.\n");
   printf("\tdefault: %f\n\n", p->high);
 
+  printf(" -d INTEGER\n\tAn integer between [0-255], the maximum\n"
+	 "\tvalue that the JPEG array will be filled with.\n"
+	 "\tDefault: %u\n\n", p->maxbyt);
+
   printf(" -f INTEGER\n\tInner (black) border width\n");
   printf("\tdefault: %d\n\n", p->ibord);
 
@@ -393,7 +399,7 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
     printhelp(p);
 
   while( (c=getopt(argc, argv, 
-		   "hvltbanc:e:o:i:w:p:q:f:g:r:u:j:k:s:y:")) != -1 )
+		   "hvltbanc:d:e:o:i:w:p:q:f:g:r:u:j:k:s:y:")) != -1 )
     switch(c)
       {
       case 'h':			/* Print help. */
@@ -423,6 +429,9 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
       case 'i':			/* Input FITS image name. */
 	p->inname=optarg;
 	break;
+      case 'e':			/* Extension of the FITS image. */
+	checkint(optarg, &p->ext, c);
+	break;
       case 'o': 		/* Output JPEG image name. */
 	p->outname=optarg;
 	p->freeoutname=0;
@@ -448,8 +457,9 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
       case 'q':
 	p->high=strtof(optarg, &tailptr);
 	break;
-      case 'e':			/* Extension of the FITS image. */
-	checkint(optarg, &p->ext, c);
+      case 'd':			/* Maximum byte value in JPEG  */
+	checkintlimit(optarg, &tmp, c, 0, UCHAR_MAX);
+	p->maxbyt=tmp;
 	break;
       case 'f':			/* Inner border. */
 	checkint(optarg, &p->ibord, c);

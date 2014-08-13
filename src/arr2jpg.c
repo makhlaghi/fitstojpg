@@ -186,12 +186,12 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 								\
     ADJUSTMINMAXTRUNC;						\
 								\
-    m=(double)UCHAR_MAX/((double)max-(double)min);		\
+    m=(double)maxbyt/((double)max-(double)min);			\
     if(p->color=='g')						\
       {								\
 	if(p->inv)						\
 	  for(i=0;i<size;i++)					\
-	    jsr[i]=UCHAR_MAX-(arr[i]-min)*m;			\
+	    jsr[i]=maxbyt-(arr[i]-min)*m;			\
 	else							\
 	  for(i=0;i<size;i++)					\
 	    jsr[i]=(arr[i]-min)*m;				\
@@ -201,7 +201,7 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 	if(p->inv)				                \
 	  for(i=0;i<size;i++)			                \
 	    {					                \
-	      jsr[i*4+3]=UCHAR_MAX-(arr[i]-min)*m;		\
+	      jsr[i*4+3]=maxbyt-(arr[i]-min)*m;			\
 	      jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	      	\
 	    }							\
 	else							\
@@ -227,14 +227,14 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 								\
     ADJUSTMINMAXTRUNC;						\
 								\
-    m=(double)UCHAR_MAX/((double)max-(double)min);		\
+    m=(double)maxbyt/((double)max-(double)min);			\
                                                                 \
     if(p->color=='g')						\
       {								\
 	if(p->inv)						\
 	  for(i=0;i<s0;i++)					\
 	    for(j=0;j<s1;j++)					\
-	      jsr[(i+o)*ns1+j+o]=UCHAR_MAX-(arr[i*s1+j]-min)*m;	\
+	      jsr[(i+o)*ns1+j+o]=maxbyt-(arr[i*s1+j]-min)*m;	\
 	else							\
 	  for(i=0;i<s0;i++)					\
 	    for(j=0;j<s1;j++)					\
@@ -253,7 +253,7 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 	    for(j=0;j<s1;j++)					\
 	      {							\
 		start=((i+o)*ns1+j+o)*4;			\
-		jsr[start+3]=UCHAR_MAX-(arr[i*s1+j]-min)*m;	\
+		jsr[start+3]=maxbyt-(arr[i*s1+j]-min)*m;	\
 	      }							\
 	else							\
 	  for(i=0;i<s0;i++)					\
@@ -302,6 +302,7 @@ bytefilljsarr(JSAMPLE *jsr, unsigned char *arr, size_t s0, size_t s1,
   double m;
   size_t size, ib, ob;
   unsigned char min, max;
+  unsigned char maxbyt=p->maxbyt;
   size_t i, j, start, o, ns0, ns1;
 
   ucminmax(arr, s0*s1, &min, &max);
@@ -324,6 +325,7 @@ shortfilljsarr(JSAMPLE *jsr, short *arr, size_t s0, size_t s1,
   double m;
   short min, max;
   size_t size, ib, ob;
+  unsigned char maxbyt=p->maxbyt;
   size_t i, j, start, o, ns0, ns1;
 
   shortminmax(arr, s0*s1, &min, &max);
@@ -346,6 +348,7 @@ longfilljsarr(JSAMPLE *jsr, long *arr, size_t s0, size_t s1,
   double m;
   long min, max;
   size_t size, ib, ob;
+  unsigned char maxbyt=p->maxbyt;
   size_t i, j, start, o, ns0, ns1;
 
   longminmax(arr, s0*s1, &min, &max);
@@ -368,6 +371,7 @@ floatfilljsarr(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
   double m;
   float min, max;
   size_t size, ib, ob;
+  unsigned char maxbyt=p->maxbyt;
   size_t i, j, start, o, ns0, ns1;
 
   floatminmax(arr, s0*s1, &min, &max);
@@ -390,6 +394,7 @@ doublefilljsarr(JSAMPLE *jsr, double *arr, size_t s0, size_t s1,
   double m;
   double min, max;
   size_t size, ib, ob;
+  unsigned char maxbyt=p->maxbyt;
   size_t i, j, start, o, ns0, ns1;
 
   doubleminmax(arr, s0*s1, &min, &max);
