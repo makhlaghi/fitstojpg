@@ -44,31 +44,32 @@ void
 setdefaultoptions(struct a2jparams *p)
 {
   /* On/Off options: */
-  p->log         =0;
-  p->inv         =1; 
-  p->allext      =0;
-  p->ttrunccolor =0;
-  p->btrunccolor =0;
+  p->log          = 0;
+  p->inv          = 1; 
+  p->allext       = 0;
+  p->ttrunccolor  = 0;
+  p->btrunccolor  = 0;
+  p->convertfirst = 0;
 
   /* Options with arguments. */
-  p->inname      ="a.fits";
-  p->color       ='c';
-  p->quality     =100;
-  p->ext         =0;
-  p->width       =5.0f;
-  p->low         =0.0f;
-  p->high        =0.0f;
-  p->maxbyt      =UCHAR_MAX;
-  p->ibord       =0;
-  p->obord       =0;
-  p->conv        =NULL;
-  p->x0          =0;
-  p->y0          =0;
-  p->x1          =0;
-  p->y1          =0;
+  p->inname       = "a.fits";
+  p->color        = 'c';
+  p->quality      = 100;
+  p->ext          = 0;
+  p->width        = 5.0f;
+  p->low          = 0.0f;
+  p->high         = 0.0f;
+  p->maxbyt       = UCHAR_MAX;
+  p->ibord        = 0;
+  p->obord        = 0;
+  p->conv         = NULL;
+  p->x0           = 0;
+  p->y0           = 0;
+  p->x1           = 0;
+  p->y1           = 0;
 
   /* For internal use: */
-  p->freeoutname =1;  /* We'll assume the user doesn't give any */
+  p->freeoutname  = 1;  /* We'll assume the user doesn't give any */
 }
 
 
@@ -271,7 +272,9 @@ printhelp(struct a2jparams *p)
   printf(" -b:\tSet the bottom (lower) truncation to ");
   printf("the minimum color.\n");
   printf("\tBy default min color is white. If `-n` option is\n");
-  printf("\tgiven it is black.\n\n\n");
+  printf("\tgiven it is black.\n\n");
+
+  printf(" -C:\tFirst apply conversion, then truncate.\n\n\n");
 
 
 
@@ -336,7 +339,9 @@ printhelp(struct a2jparams *p)
   printf("\tthat keep labels or defined regions are input.\n");
   printf("\tIn such cases, a group of pixels have one label or\n");
   printf("\tvalue and this option might come in handy.\n");
-  printf("\tConversion happens after trunctation, before log.\n");
+  printf("\tBy default, conversion happens after trunctation, but \n"
+	 "\tthis can be changed with the `-C` option. In any case, \n"
+	 "\tit occurs before log.\n");
   printf("\tThe order of conversion is the opposite of input order.\n");
   printf("\tNote that no spaces must be used any where in ");
   printf("the argument\n");
@@ -399,7 +404,7 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
     printhelp(p);
 
   while( (c=getopt(argc, argv, 
-		   "hvltbanc:d:e:o:i:w:p:q:f:g:r:u:j:k:s:y:")) != -1 )
+		   "Chvltbanc:d:e:o:i:w:p:q:f:g:r:u:j:k:s:y:")) != -1 )
     switch(c)
       {
       case 'h':			/* Print help. */
@@ -423,6 +428,9 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 	break;
       case 'b':			/* Bottom truncation to min color. */
 	p->btrunccolor=1;
+	break;
+      case 'C':			/* Bottom truncation to min color. */
+	p->convertfirst=1;
 	break;
 
       /* Options with arguments: */

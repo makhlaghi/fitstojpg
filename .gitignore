@@ -1,5 +1,7 @@
-*.[oa]
 *~
+*.[oa]
+*.fits
+*.jpg
 
 fitstojpg
 

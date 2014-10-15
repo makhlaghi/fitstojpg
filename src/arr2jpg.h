@@ -53,6 +53,7 @@ struct a2jparams
   int                 log;	/* Logarithmic or not.                 */
   int         ttrunccolor;      /* High truncation as max color.       */
   int         btrunccolor;	/* Low truncation as min color.        */
+  int        convertfirst;	/* First convert then truncate.        */
 
   /* Options with arguments: */
   char            *inname;	/* Name of input.                      */
