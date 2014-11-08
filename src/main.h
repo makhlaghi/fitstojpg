@@ -23,8 +23,6 @@ along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 #ifndef MAIN_H
 #define MAIN_H
 
-#define FITSTOJPGVERSION 0.3
-
 void 
 convertallext(struct a2jparams *p);
 

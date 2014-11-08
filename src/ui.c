@@ -27,51 +27,149 @@ along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "config.h"
 #include "arr2jpg.h"
-#include "main.h"
-#include "ui.h"
+
+#include "ui.h"			/* Needs arr2jpg.h          */
+#include "argpparser.h"		/* Needs arr2jpg.h and ui.h */
 
 
 
 
 
 /****************************************************************
- *****************     Small functions used    ******************
- *********************      in main()      **********************
+ *****************      Checking functions     ******************
  ****************************************************************/
-/* Set the default values for the inputs */
 void
-setdefaultoptions(struct a2jparams *p)
+intelzero(char *optarg, int *var, char *lo, char so)
 {
-  /* On/Off options: */
-  p->log          = 0;
-  p->inv          = 1; 
-  p->allext       = 0;
-  p->ttrunccolor  = 0;
-  p->btrunccolor  = 0;
-  p->convertfirst = 0;
-
-  /* Options with arguments. */
-  p->inname       = "a.fits";
-  p->color        = 'c';
-  p->quality      = 100;
-  p->ext          = 0;
-  p->width        = 5.0f;
-  p->low          = 0.0f;
-  p->high         = 0.0f;
-  p->maxbyt       = UCHAR_MAX;
-  p->ibord        = 0;
-  p->obord        = 0;
-  p->conv         = NULL;
-  p->x0           = 0;
-  p->y0           = 0;
-  p->x1           = 0;
-  p->y1           = 0;
-
-  /* For internal use: */
-  p->freeoutname  = 1;  /* We'll assume the user doesn't give any */
+  long tmp;
+  char *tailptr;
+  tmp=strtol(optarg, &tailptr, 0);
+  if(strlen(tailptr))
+    {
+      fprintf(stderr, PACKAGE": the argument to option `-%c`: `%s` was not "
+	      "readable as a number!\n", so, optarg);
+      exit(EXIT_FAILURE);
+    }
+  if(tmp<0)
+    {
+      fprintf(stderr, PACKAGE": argument to `--%s (-%c)` should be >=0, "
+	      "it is: %ld\n", lo, so, tmp);
+      exit(EXIT_FAILURE);
+    }
+  *var=tmp;  
 }
 
+
+
+
+
+void
+intlzero(char *optarg, int *var, char *lo, char so)
+{
+  long tmp;
+  char *tailptr;
+  tmp=strtol(optarg, &tailptr, 0);
+  if(strlen(tailptr))
+    {
+      fprintf(stderr, PACKAGE": the argument to option `-%c`: `%s` was not "
+	      "readable as a number!\n", so, optarg);
+      exit(EXIT_FAILURE);
+    }
+  if(tmp<=0)
+    {
+      fprintf(stderr, PACKAGE": argument to `--%s (-%c)` should be >0, "
+	      "it is: %ld\n", lo, so, tmp);
+      exit(EXIT_FAILURE);
+    }
+  *var=tmp;  
+}
+
+
+
+
+
+void
+intl1(char *optarg, int *var, char *lo, char so)
+{
+  long tmp;
+  char *tailptr;
+  tmp=strtol(optarg, &tailptr, 0);
+  if(strlen(tailptr))
+    {
+      fprintf(stderr, PACKAGE": the argument to option `-%c`: `%s` was not "
+	      "readable as a number!\n", so, optarg);
+      exit(EXIT_FAILURE);
+    }
+  if(tmp<1)
+    {
+      fprintf(stderr, PACKAGE": argument to `--%s (-%c)` should be >=1, "
+	      "it is: %ld\n", lo, so, tmp);
+      exit(EXIT_FAILURE);
+    }
+  *var=tmp;  
+}
+
+
+
+
+
+void
+floatl0(char *optarg, float *var, char *lo, char so)
+{
+  float tmp;
+  char *tailptr;
+  tmp=strtof(optarg, &tailptr);
+  if(strlen(tailptr))
+    {
+      fprintf(stderr, PACKAGE": the argument to option `-%c`: `%s` was not "
+	     "readable as a number!\n", so, optarg);
+      exit(EXIT_FAILURE);
+    }
+  if(tmp<=0)
+    {
+      fprintf(stderr, PACKAGE": argument to `--%s (-%c)` should be > 0, "
+	      "but it is: %.3f\n", lo, so, tmp);
+      exit(EXIT_FAILURE);      
+    }
+  *var=tmp;
+}
+
+
+
+
+
+void
+intrange(char *optarg, int *var, char *lo, char so, int low, int high)
+{
+  long tmp;
+  char *tailptr;
+  tmp=strtol(optarg, &tailptr, 0);
+  if(strlen(tailptr))
+    {
+      fprintf(stderr, PACKAGE": the argument to option `-%c`: `%s` was not "
+	     "readable as a number!\n", so, optarg);
+      exit(EXIT_FAILURE);
+    }
+  if(tmp<=low || tmp>high)
+    {
+      fprintf(stderr, PACKAGE": argument to `--%s (-%c)` should be >%d "
+	      "and >=%d. It is: %ld\n", lo, so, low, high, tmp);
+      exit(EXIT_FAILURE);
+    }
+  *var=tmp;  
+}
+
+
+
+
+void
+anyfloat(char *optarg, float *var)
+{
+  char *tailptr;
+  *var=strtof(optarg, &tailptr);
+}
 
 
 
@@ -162,6 +260,21 @@ freeconvstruct(struct conversion *c)
 
 
 
+void
+consistencycheck(struct a2jparams *p)
+{    
+  /* Check the lower and higher trunction values. */
+  if(p->fluxlow>p->fluxhigh)
+    {
+      fprintf(stderr, PACKAGE": Lower (%f) > higher (%f).\n\n", 
+	      p->fluxlow, p->fluxhigh);
+      exit(EXIT_FAILURE);	    
+    }
+}
+
+
+
+
 
 
 
@@ -179,183 +292,8 @@ freeconvstruct(struct conversion *c)
 /****************************************************************
  *****************        Read options:      ********************
  ****************************************************************/
-/* Check if an integer input is positive (>=0). */
-void
-checkint(char *optarg, int *var, int opt)
-{
-  long tmp;
-  char *tailptr;
-  tmp=strtol(optarg, &tailptr, 0);
-  if(tmp<0)
-    {
-      printf("\n\n Error: argument to -%c ", opt); 
-      printf("should be positive\n\n");
-      exit(EXIT_FAILURE);
-    }
-  *var=tmp;  
-}
-
-
-
-
-
-void
-checkintlimit(char *optarg, int *var, int opt, 
-	      int llimit, int hlimit)
-{
-  long tmp;
-  char *tailptr;
-  tmp=strtol(optarg, &tailptr, 0);
-  if(tmp<llimit)
-    {
-      printf("\n\n Error: argument to `-%c` ", opt); 
-      printf("should be larger than %d\n\n", llimit);
-      exit(EXIT_FAILURE);
-    }
-  if(tmp>hlimit)
-    {
-      printf("\n\n Error: argument to `-%c` ", opt); 
-      printf("should be smaller than %d\n\n", hlimit);
-      exit(EXIT_FAILURE);
-    }
-  *var=tmp;  
-}
-
-
-
-
-
-void
-printversioninfo()
-{
-  printf("\n\nfitstojpg %.1f\n", FITSTOJPGVERSION);
-  printf("============\n");
-  printf("Convert a FITS image to a grayscale or CMYK JPEG image.\n");
-  printf("\nCopyright (C) 2014  Mohammad Akhlaghi\n");
-  printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
-  printf("This is free software, and you are welcome to\n");
-  printf("modify and redistribute it under the ");
-  printf("GNU Public License v3 or later.\n\n\n");
-}
-
-
-
-
-
-/* Print the help menu. */
-void
-printhelp(struct a2jparams *p)
-{
-  printversioninfo();
-  printf("####### Options that won't run 'fitstojpg'.\n");
-  printf(" -h:\tPrint this command and abort.\n\n");
-  printf(" -v:\tPrint only version and copyright information.\n\n\n");
-
-  printf("####### Options without arguments (On or Off):\n");
-  printf("By default all are off\n");
-  printf(" -n:\tDon't inverse the image.\n");
-  printf("\tBy default all images are inverted:\n");
-  printf("\ta larger pixel value is translated to darker colors.\n");
-  printf("\tThis is better for Astronomical objects with \n");
-  printf("\ta large area covered by the sky.\n\n");
-
-  printf(" -a:\tConvert all extentions to JPEG.\n");
-  printf("\tThe extention numbers will be appended to \n"); 
-  printf("\tthe JPEG names for each extention.\n\n");
-
-  printf(" -l:\tLogarithmic scaling.\n\n");
-
-  printf(" -t:\tSet the top truncation to the max color.\n");
-  printf("\tBy default max color is black. If `-n` option is\n");
-  printf("\tgiven it is white.\n\n");
-
-  printf(" -b:\tSet the bottom (lower) truncation to ");
-  printf("the minimum color.\n");
-  printf("\tBy default min color is white. If `-n` option is\n");
-  printf("\tgiven it is black.\n\n");
-
-  printf(" -C:\tFirst apply conversion, then truncate.\n\n\n");
-
-
-
-  printf("####### Options with arguments:\n");
-  printf(" -i FILENAME\n\tInput FITS image name.\n\n");
-
-  printf(" -e INTEGER\n\tFITS extention (if '-n' is not called)\n");
-  printf("\tdefault: %d\n\n", p->ext);
-
-  printf(" -o FILENAME\n\tOutput JPG image name\n");
-  printf("\tdefault. When input is 'base.fits': 'base.jpg'.\n\n");
-
-  printf(" -u INTEGER\n\tOutput JPG quality.\n");
-  printf("\t100: No compression, high quality. As the value\n");
-  printf("\tdecreases, the compression is more effective\n");
-  printf("\tresulting in a lower file  size, but the quality\n");
-  printf("\tdecreases.\n");
-  printf("\tdefault: %d.\n\n", p->quality);
-
-  printf(" -w FLOAT\n\tOutput JPG width in centimeters.\n");
-  printf("\tdefault: %.3fcm\n\n", p->width);
-
-  printf(" -c CHARACTER\n\tColor mode:\n");
-  printf("\t\tc: CMYK.\n");
-  printf("\t\tg: Gray scale image.\n");
-  printf("\tdefault: %c\n\n", p->color);
-
-  printf(" -p FLOAT\n\tLower pixel value truncation.\n");
-  printf("\tIf equal to higher, no truncation.\n");
-  printf("\tdefault: %f\n\n", p->low);
-
-  printf(" -q FLOAT\n\tHigher pixel value truncation.\n");
-  printf("\tIf equal to lower, no truncation.\n");
-  printf("\tdefault: %f\n\n", p->high);
-
-  printf(" -d INTEGER\n\tAn integer between [0-255], the maximum\n"
-	 "\tvalue that the JPEG array will be filled with.\n"
-	 "\tDefault: %u\n\n", p->maxbyt);
-
-  printf(" -f INTEGER\n\tInner (black) border width\n");
-  printf("\tdefault: %d\n\n", p->ibord);
-
-  printf(" -g INTEGER\n\tOuter (white) border width\n");
-  printf("\tdefault: %d\n\n", p->obord);
-
-  printf(" -j INTEGER\n\tCrop box Bottom Left position.\n"
-	 "\tHorizontal, First FITS axis\n\n");
-
-  printf(" -k INTEGER\n\tCrop box Bottom Left position.\n"
-	 "\tVertial, Second FITS axis.\n\n");
-
-  printf(" -s INTEGER\n\tCrop box Top Right position.\n"
-	 "\tHorizontal, First FITS axis\n\n");
-
-  printf(" -y INTEGER\n\tCrop box Top Right position.\n"
-	 "\tVertial, Second FITS axis.\n\n");
-
-  printf(" -r from_1:to_1,from_2:to_2,...,from_N:to_N\n");
-  printf("\tConvert \"from\" to \"to\".\n");
-  printf("\tThis is usually not needed in astronomical images.\n");
-  printf("\tBut can be useful if segmentation maps, or images\n");
-  printf("\tthat keep labels or defined regions are input.\n");
-  printf("\tIn such cases, a group of pixels have one label or\n");
-  printf("\tvalue and this option might come in handy.\n");
-  printf("\tBy default, conversion happens after trunctation, but \n"
-	 "\tthis can be changed with the `-C` option. In any case, \n"
-	 "\tit occurs before log.\n");
-  printf("\tThe order of conversion is the opposite of input order.\n");
-  printf("\tNote that no spaces must be used any where in ");
-  printf("the argument\n");
-  printf("\tdefault: Convert nothing!\n\n\n");
-
-  exit(EXIT_SUCCESS);
-}
-
-
-
-
-
 struct conversion *
-makeconvstruct(char *arg, int opt)
+makeconvstruct(char *arg)
 {
   char *p=arg;
   struct conversion *out=NULL, *c;
@@ -367,20 +305,18 @@ makeconvstruct(char *arg, int opt)
       if(*p==':') p++;
       else
 	{
-	  printf("\n\nError in argument to '-%c':\n", opt);
-	  printf("\t[from] and [to] values should be ");
-	  printf("separated by a ':'.\n"); 
-	  printf("\tYou have provided a '%c': \t%s\n\n\n", *p, arg);
+	  fprintf(stderr, PACKAGE": In the conversion option, [from] "
+		  "and [to] values should be separated by a ':'. You "
+		  "have given a '%c': %s\n", *p, arg);
 	  exit(EXIT_FAILURE);
 	}
       c->to=strtof(p, &p);
       if(*p==',') p++;
       else if(*p!='\0')
 	{
-	  printf("\n\nError in argument to %c:\n", opt);
-	  printf("[from] and [to] pairs should be ");
-	  printf("separated by a ','.\n"); 
-	  printf("\tYou have provided a '%c': \t%s\n\n\n", *p, arg);
+	  fprintf(stderr, PACKAGE": In the conversion option, [from] "
+		  "and [to] pairs should be separated by a ','. You have "
+		  "provided a '%c': %s\n\n\n", *p, arg);
 	  exit(EXIT_FAILURE);
 	}
       c->next=out;
@@ -393,12 +329,65 @@ makeconvstruct(char *arg, int opt)
 
 
 
+void
+setparams(struct a2jparams *p, int argc, char *argv[])
+{
+  /* Default operating modes: */
+  p->log          = 0;
+  p->inv          = 1;
+  p->allext       = 0;
+  p->ttrunccolor  = 0;
+  p->btrunccolor  = 0;
+  p->convertfirst = 0;
+  
+  /* Default input FITS image parameters: */
+  p->imgname      = NULL;
+  p->imgext       = DP_IMGEXT_V;
+  p->fluxlow      = DP_FLUXLOW_V;
+  p->fluxhigh     = DP_FLUXHIGH_V;
+  p->x1           = DP_Y1_V-1;
+  p->y1           = DP_X1_V-1;
+  p->x2           = DP_Y2_V-1;
+  p->y2           = DP_X2_V-1;
+  p->conv         = NULL;
+
+  /* Default output JPEG image parameters: */
+  p->outname      = NULL;
+  p->quality      = DP_QUALITY_V;
+  p->width        = DP_WIDTH_V;
+  p->colormode    = DP_COLORMODE_V;
+  p->maxjpg       = DP_MAXJPG_V;
+  p->iborder      = DP_IBORDER_V;
+  p->oborder      = DP_OBORDER_V;
+  p->freeoutname  = 1;
+  
+  /* Read the arguments: */
+  argp_parse(&argp, argc, argv, 0, 0, p);
+
+  /* Check if the input values are consistent: */
+  consistencycheck(p);
+
+  /* If outname was not set, set it here. In case all extentions are
+     wanted, then this job will be done else where. */
+  if(p->freeoutname && p->allext==0)
+    {
+      findnamebase(p->imgname, &p->outname);
+      strcat(p->outname, ".jpg");
+    }
+}
+
+
+
+
+#if 0
 /* Read all the options into the program */
 void
 getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 {
   int c, tmp;
   char *tailptr;
+
+  setdefaultoptions(&in);	     /* ui.c */
 
   if(argc==1)
     printhelp(p);
@@ -445,7 +434,7 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 	p->freeoutname=0;
 	break;
       case 'c':			/* Color scale. */
-	p->color=*optarg;
+	p->colormode=*optarg;
 	break;
       case 'u':			/* Quality of JPEG compression. */
 	checkintlimit(optarg, &p->quality, c, 0, 100);
@@ -467,13 +456,13 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 	break;
       case 'd':			/* Maximum byte value in JPEG  */
 	checkintlimit(optarg, &tmp, c, 0, UCHAR_MAX);
-	p->maxbyt=tmp;
+	p->maxjpg=tmp;
 	break;
       case 'f':			/* Inner border. */
-	checkint(optarg, &p->ibord, c);
+	checkint(optarg, &p->iborder, c);
 	break;
       case 'g':			/* Outer border. */
-	checkint(optarg, &p->obord, c);
+	checkint(optarg, &p->oborder, c);
 	break;
       case 'r':			/* Convert pixel values */
 	p->conv=makeconvstruct(optarg, c);
@@ -501,19 +490,6 @@ getsaveoptions(struct a2jparams *p, int argc, char *argv[])
 	abort();
       }
 
-  /* If outname was not set, set it here. In case all extentions are
-     wanted, then this job will be done else where. */
-  if(p->freeoutname==1 && p->allext==0)
-    {
-      findnamebase(p->inname, &p->outname);
-      strcat(p->outname, ".jpg");
-    }
-    
-  /* Check the lower and higher trunction values. */
-  if(p->low>p->high)
-    {
-      fprintf(stderr, "Abort: Lower (%f) > higher (%f).\n\n", 
-	      p->low, p->high);
-      exit(EXIT_FAILURE);	    
-    }
+  checkinimage(p->inname);
 }
+#endif

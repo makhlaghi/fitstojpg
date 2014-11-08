@@ -17,7 +17,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
-
 **********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,12 +24,15 @@ along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 #include <assert.h>
 #include <jpeglib.h>
 
+
+#include "config.h"
 #include "arr2jpg.h"
-#include "ui.h"
-#include "stats.h"
-#include "main.h"
 #include "arraymanip.h"
 #include "fitsarrayvv.h"
+
+#include "ui.h"			/* Needs arr2jpg.h */
+#include "main.h"		/* Needs arr2jpg.h */
+#include "stats.h"		/* Needs arr2jpg.h */
 
 
 
@@ -42,11 +44,7 @@ main(int argc, char *argv[])
 {
   struct a2jparams in;
 
-  setdefaultoptions(&in);	     /* ui.c */
-
-  getsaveoptions(&in, argc, argv);   /* ui.c */
-  
-  checkinimage(in.inname);	     /* ui.c */
+  setparams(&in, argc, argv);   /* ui.c */
 
   if(in.allext)
     convertallext(&in);		     /* below! */
@@ -73,21 +71,21 @@ convertoneext(struct a2jparams *p)
   int bitpix;
   size_t s0, s1;
 
-  fits_to_array(p->inname, p->ext, &bitpix, &arr, &s0, &s1);
+  fits_to_array(p->imgname, p->imgext, &bitpix, &arr, &s0, &s1);
   checkremoveoutimage(p->outname);   /* ui.c */
-  if(p->x0!=0 || p->y0!=0 || p->x1!=0 || p->y1!=0)
+  if(p->x1!=p->x2 && p->y1!=p->y2)
     {
-      shrinkarray(&arr, bitpix, s0, s1, p->x0, p->y0, p->x1, p->y1);
-      if(!arr) /* If the region is out of the image */
+      shrinkarray(&arr, bitpix, s0, s1, p->x1, p->y1, p->x2, p->y2);
+      if(arr==NULL) /* If the region is out of the image */
 	{
-	  printf("\n\nWarning: the cropped region (%d, %d)-(%d,%d)"
-		 "was out of the image range (%lu, %lu).\n", 
-		 p->y0+1, p->x0+1, p->y1+1, p->x1+1, s1, s0);
-	  printf("No JPEG image created\n\n");
-	  return;
+	  fprintf(stderr, PACKAGE": the cropped region (%d, %d)-(%d,%d)"
+		  "does not overlap with the image (%lu, %lu). No JPEG "
+		  "image created", p->y1+1, p->x1+1, p->y2+1, p->x2+1,
+		  s1, s0);
+	  exit(EXIT_FAILURE);
 	}
-      s0=p->x1-p->x0;
-      s1=p->y1-p->y0;
+      s0=p->x2-p->x1;
+      s1=p->y2-p->y1;
     }
   arr2jpg(arr, s0, s1, bitpix, p);   /* arr2jpg.c */
   
@@ -105,7 +103,7 @@ convertallext(struct a2jparams *p)
   char *base;
   int  i, numext;
 
-  numextinfits(p->inname, &numext);  /* fitsarrayvv.c */
+  numextinfits(p->imgname, &numext);  /* fitsarrayvv.c */
 
   /* Check which name to use as base. */
   if(p->freeoutname==0)/* an outname is supplied. */
@@ -116,7 +114,7 @@ convertallext(struct a2jparams *p)
 	 allocated in ui.c. It will be allocated here and freed
 	 here. */
       p->freeoutname=0;
-      findnamebase(p->inname, &base);  /* ui.c */
+      findnamebase(p->imgname, &base);  /* ui.c */
     }
 
   p->outname=malloc(strlen(base)*sizeof *(p->outname));
@@ -124,7 +122,7 @@ convertallext(struct a2jparams *p)
 
   for(i=0;i<numext;i++)
     {
-      p->ext=i;
+      p->imgext=i;
       sprintf(p->outname, "%s_%d.jpg", base, i+1);
       convertoneext(p);
     }

@@ -24,21 +24,36 @@ along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 #define UI_H
 
 void
-setdefaultoptions(struct a2jparams *p);
+anyfloat(char *optarg, float *var);
+
+void
+intl1(char *optarg, int *var, char *lo, char so);
+
+void
+intlzero(char *optarg, int *var, char *lo, char so);
+
+void
+intelzero(char *optarg, int *var, char *lo, char so);
+
+void
+floatl0(char *optarg, float *var, char *lo, char so);
+
+void
+intrange(char *optarg, int *var, char *lo, char so, int low, int high);
 
 void
 checkremoveoutimage(char *outname);
 
 void
-checkinimage(char *inname);
+findnamebase(char *inname, char **out);
+
+struct conversion *
+makeconvstruct(char *arg);
 
 void
-findnamebase(char *inname, char **out);
+setparams(struct a2jparams *p, int argc, char *argv[]);
 
 void
 freeconvstruct(struct conversion *c);
-
-void
-getsaveoptions(struct a2jparams *p, int argc, char *argv[]);
 
 #endif

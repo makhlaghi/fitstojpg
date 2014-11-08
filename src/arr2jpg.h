@@ -33,6 +33,12 @@ along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
 #define FLOAT_IMG     -32
 #define DOUBLE_IMG    -64
 
+/* To keep the color mode codes: */
+#define CMYKNAME       "cmyk"
+#define GRAYNAME       "gray"
+#define CMYKCODE       'c'
+#define GRAYCODE       'g'
+
 
 /* This is used in converting certain values in the array. */
 struct conversion
@@ -47,7 +53,7 @@ struct conversion
 /* Structure to define the inputs into float2jpg. */
 struct a2jparams
 {
-  /* On/Off options: */
+  /* Operating modes: */
   int                 inv;      /* Inverse grayscale image.            */
   int              allext;      /* Convert all extensions to JPEG.     */
   int                 log;	/* Logarithmic or not.                 */
@@ -55,23 +61,25 @@ struct a2jparams
   int         btrunccolor;	/* Low truncation as min color.        */
   int        convertfirst;	/* First convert then truncate.        */
 
-  /* Options with arguments: */
-  char            *inname;	/* Name of input.                      */
-  char           *outname;	/* Name of output.                     */
-  char              color;	/* c: CMYK. g: Grayscale.              */
-  int             quality;	/* Quality of JPEG compression.        */
-  int                 ext;	/* Extention of FITS image.            */
-  float             width;	/* Width of image in cm.               */
-  float               low;	/* Lower pixel value trunctation.      */
-  float              high; 	/* Higher pixel value truncation.      */
-  unsigned char    maxbyt;	/* Maximum BYTE value to use in image. */
-  int               ibord;      /* Inner border (black) width.         */
-  int               obord;     	/* Outer border (White) width.         */
-  int                  x0;	/* Crop Bottom left corner x axis.     */
-  int                  y0;	/* Crop Bottom left corner y axis.     */
-  int                  x1;	/* Crop Top right corner x axis.       */
-  int                  y1;	/* Crop Top right corner y axis.       */
+  /* Input FITS image: */
+  char           *imgname;	/* Name of input.                      */
+  int              imgext;	/* Extention of FITS image.            */
+  float           fluxlow;	/* Lower pixel value trunctation.      */
+  float          fluxhigh; 	/* Higher pixel value truncation.      */
+  int                  x1;	/* Crop Bottom left corner x axis.     */
+  int                  y1;	/* Crop Bottom left corner y axis.     */
+  int                  x2;	/* Crop Top right corner x axis.       */
+  int                  y2;	/* Crop Top right corner y axis.       */
   struct conversion *conv;	/* Structure to define conversion.     */
+
+  /* Output JPEG image: */
+  char           *outname;	/* Name of output.                     */
+  int             quality;	/* Quality of JPEG compression.        */
+  float             width;	/* Width of image in cm.               */
+  char          colormode;	/* c: CMYK. g: Grayscale.              */
+  unsigned char    maxjpg;	/* Maximum BYTE value to use in image. */
+  int             iborder;      /* Inner border (black) width.         */
+  int             oborder;     	/* Outer border (White) width.         */
 
   /* Internal options: */
   int         freeoutname;	/* Free the outname or not?            */

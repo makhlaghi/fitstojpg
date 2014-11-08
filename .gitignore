@@ -1,7 +1,15 @@
 *~
+*.jpg
 *.[oa]
 *.fits
-*.jpg
 
+Makefile
+config.h
+stamp-h1
 fitstojpg
-
+src/.deps/
+config.log
+src/Makefile
+config.status
+src/runtest.sh
+autom4te.cache/

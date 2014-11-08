@@ -1,0 +1,30 @@
+# Default values for FITStoJPG. 
+#
+# You can set the default values prior to running `./configure` by
+# editing the values in this file. The names of the parameters are the
+# same as their long option names and should not be altered.
+#
+# Note that since this is a shell script, no space should exist
+# between the option name, the equal sign and the given value.
+
+# Input:
+#-------------------
+imgext=0
+fluxlow=0
+fluxhigh=0
+x1=1
+y1=1
+x2=1
+y2=1
+
+
+#JPG parameters:
+#-------------------
+quality=100
+width=5.0
+colormode=cmyk
+maxjpg=255
+iborder=0
+oborder=0
+
+

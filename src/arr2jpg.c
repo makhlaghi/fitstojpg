@@ -47,17 +47,17 @@ makejsample(JSAMPLE **a, size_t s0, size_t s1, struct a2jparams *p)
       exit(EXIT_FAILURE);
     }
 
-  o=p->ibord*2+p->obord*2;
+  o=p->iborder*2+p->oborder*2;
 
   size=(s0+o)*(s1+o);
-  if(p->color=='c') size*=4;	/* For CMYK. */
+  if(p->colormode==CMYKCODE) size*=4;	/* For CMYK. */
 
-  if(p->obord+p->ibord && p->color=='g')
+  if(p->oborder+p->iborder && p->colormode==GRAYCODE)
     assert( (jsarr=calloc(size, sizeof *jsarr))!=NULL );
   else
     assert( (jsarr=malloc(size*sizeof *jsarr))!=NULL );
 
-  if(p->color=='c')
+  if(p->colormode==CMYKCODE)
     {
       pt=jsarr;  fpt=jsarr+size;
       do
@@ -112,7 +112,7 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 
   cinfo.image_width  = s1;
   cinfo.image_height = s0;
-  if(p->color=='c')
+  if(p->colormode==CMYKCODE)
     {
       row_stride=4*s1;
       cinfo.input_components = 4;
@@ -172,13 +172,13 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
    (make the image not have pure black or white).
 
    Note that because truncation was applied before this step,
-   max<=p->high and min>=p->low. So all we have to do is change their
+   max<=p->fluxhigh and min>=p->low. So all we have to do is change their
    values to the user input high and low values.*/
 #define ADJUSTMINMAXTRUNC {			                \
-  if(p->low!=p->high && p->ttrunccolor)				\
-    max=p->high;						\
-  if(p->low!=p->high && p->btrunccolor)				\
-    min=p->low;							\
+  if(p->fluxlow!=p->fluxhigh && p->ttrunccolor)		        \
+    max=p->fluxhigh;						\
+  if(p->fluxlow!=p->fluxhigh && p->btrunccolor)			\
+    min=p->fluxlow;						\
 }
 
 
@@ -186,12 +186,12 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 								\
     ADJUSTMINMAXTRUNC;						\
 								\
-    m=(double)maxbyt/((double)max-(double)min);			\
-    if(p->color=='g')						\
+    m=(double)maxjpg/((double)max-(double)min);			\
+    if(p->colormode==GRAYCODE)					\
       {								\
 	if(p->inv)						\
 	  for(i=0;i<size;i++)					\
-	    jsr[i]=maxbyt-(arr[i]-min)*m;			\
+	    jsr[i]=maxjpg-(arr[i]-min)*m;			\
 	else							\
 	  for(i=0;i<size;i++)					\
 	    jsr[i]=(arr[i]-min)*m;				\
@@ -201,7 +201,7 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 	if(p->inv)				                \
 	  for(i=0;i<size;i++)			                \
 	    {					                \
-	      jsr[i*4+3]=maxbyt-(arr[i]-min)*m;			\
+	      jsr[i*4+3]=maxjpg-(arr[i]-min)*m;			\
 	      jsr[i*4]=jsr[i*4+1]=jsr[i*4+2]=UCHAR_MAX;	      	\
 	    }							\
 	else							\
@@ -219,22 +219,22 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 
 #define FILLJSARRAYWITHBORDBODY {                               \
 								\
-    ib=p->ibord;						\
-    ob=p->obord;						\
+    ib=p->iborder;						\
+    ob=p->oborder;						\
     o=ib+ob;							\
     ns0=s0+2*o;							\
     ns1=s1+2*o;							\
 								\
     ADJUSTMINMAXTRUNC;						\
 								\
-    m=(double)maxbyt/((double)max-(double)min);			\
+    m=(double)maxjpg/((double)max-(double)min);			\
                                                                 \
-    if(p->color=='g')						\
+    if(p->colormode==GRAYCODE)					\
       {								\
 	if(p->inv)						\
 	  for(i=0;i<s0;i++)					\
 	    for(j=0;j<s1;j++)					\
-	      jsr[(i+o)*ns1+j+o]=maxbyt-(arr[i*s1+j]-min)*m;	\
+	      jsr[(i+o)*ns1+j+o]=maxjpg-(arr[i*s1+j]-min)*m;	\
 	else							\
 	  for(i=0;i<s0;i++)					\
 	    for(j=0;j<s1;j++)					\
@@ -253,7 +253,7 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
 	    for(j=0;j<s1;j++)					\
 	      {							\
 		start=((i+o)*ns1+j+o)*4;			\
-		jsr[start+3]=maxbyt-(arr[i*s1+j]-min)*m;	\
+		jsr[start+3]=maxjpg-(arr[i*s1+j]-min)*m;	\
 	      }							\
 	else							\
 	  for(i=0;i<s0;i++)					\
@@ -302,13 +302,13 @@ bytefilljsarr(JSAMPLE *jsr, unsigned char *arr, size_t s0, size_t s1,
   double m;
   size_t size, ib, ob;
   unsigned char min, max;
-  unsigned char maxbyt=p->maxbyt;
+  unsigned char maxjpg=p->maxjpg;
   size_t i, j, start, o, ns0, ns1;
 
   ucminmax(arr, s0*s1, &min, &max);
 
   size=s0*s1;
-  if(p->ibord==0 && p->obord==0)
+  if(p->iborder==0 && p->oborder==0)
     {FILLJSARRBODY}
   else
     {FILLJSARRAYWITHBORDBODY}
@@ -325,13 +325,13 @@ shortfilljsarr(JSAMPLE *jsr, short *arr, size_t s0, size_t s1,
   double m;
   short min, max;
   size_t size, ib, ob;
-  unsigned char maxbyt=p->maxbyt;
+  unsigned char maxjpg=p->maxjpg;
   size_t i, j, start, o, ns0, ns1;
 
   shortminmax(arr, s0*s1, &min, &max);
 
   size=s0*s1;
-  if(p->ibord==0 && p->obord==0)
+  if(p->iborder==0 && p->oborder==0)
     {FILLJSARRBODY}
   else
     {FILLJSARRAYWITHBORDBODY}
@@ -348,13 +348,13 @@ longfilljsarr(JSAMPLE *jsr, long *arr, size_t s0, size_t s1,
   double m;
   long min, max;
   size_t size, ib, ob;
-  unsigned char maxbyt=p->maxbyt;
+  unsigned char maxjpg=p->maxjpg;
   size_t i, j, start, o, ns0, ns1;
 
   longminmax(arr, s0*s1, &min, &max);
 
   size=s0*s1;
-  if(p->ibord==0 && p->obord==0)
+  if(p->iborder==0 && p->oborder==0)
     {FILLJSARRBODY}
   else
     {FILLJSARRAYWITHBORDBODY}
@@ -371,13 +371,13 @@ floatfilljsarr(JSAMPLE *jsr, float *arr, size_t s0, size_t s1,
   double m;
   float min, max;
   size_t size, ib, ob;
-  unsigned char maxbyt=p->maxbyt;
+  unsigned char maxjpg=p->maxjpg;
   size_t i, j, start, o, ns0, ns1;
 
   floatminmax(arr, s0*s1, &min, &max);
 
   size=s0*s1;
-  if(p->ibord==0 && p->obord==0)
+  if(p->iborder==0 && p->oborder==0)
     {FILLJSARRBODY}
   else
     {FILLJSARRAYWITHBORDBODY}
@@ -394,13 +394,13 @@ doublefilljsarr(JSAMPLE *jsr, double *arr, size_t s0, size_t s1,
   double m;
   double min, max;
   size_t size, ib, ob;
-  unsigned char maxbyt=p->maxbyt;
+  unsigned char maxjpg=p->maxjpg;
   size_t i, j, start, o, ns0, ns1;
 
   doubleminmax(arr, s0*s1, &min, &max);
 
   size=s0*s1;
-  if(p->ibord==0 && p->obord==0)
+  if(p->iborder==0 && p->oborder==0)
     {FILLJSARRBODY}
   else
     {FILLJSARRAYWITHBORDBODY}
@@ -435,7 +435,7 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
 {
   JSAMPLE *jsr;
   
-  assert(p->color=='c' || p->color=='g');
+  assert(p->colormode==CMYKCODE || p->colormode==GRAYCODE);
  
   makejsample(&jsr, s0, s1, p);
   
@@ -445,11 +445,13 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       if(p->convertfirst)
 	{
 	  if(p->conv!=NULL) convuc(p->conv, arr, s0*s1);
-	  if(p->low<p->high) truncucarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncucarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	}
       else
 	{
-	  if(p->low<p->high) truncucarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncucarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	  if(p->conv!=NULL) convuc(p->conv, arr, s0*s1);
 	}
       if(p->log) ucarrlog(arr, s0*s1);
@@ -459,11 +461,13 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       if(p->convertfirst)
 	{
 	  if(p->conv!=NULL) convs(p->conv, arr, s0*s1);
-	  if(p->low<p->high) truncsarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncsarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	}
       else
 	{
-	  if(p->low<p->high) truncsarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncsarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	  if(p->conv!=NULL) convs(p->conv, arr, s0*s1);
 	}
       if(p->log) sarrlog(arr, s0*s1);
@@ -473,11 +477,13 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       if(p->convertfirst)
 	{
 	  if(p->conv!=NULL) convl(p->conv, arr, s0*s1);
-	  if(p->low<p->high) trunclarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    trunclarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	}
       else
 	{
-	  if(p->low<p->high) trunclarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    trunclarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	  if(p->conv!=NULL) convl(p->conv, arr, s0*s1);
 	}
       if(p->log) larrlog(arr, s0*s1);
@@ -487,11 +493,13 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       if(p->convertfirst)
 	{
 	  if(p->conv!=NULL) convf(p->conv, arr, s0*s1);
-	  if(p->low<p->high) truncfarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncfarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	}
       else
 	{
-	  if(p->low<p->high) truncfarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncfarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	  if(p->conv!=NULL) convf(p->conv, arr, s0*s1);
 	}
       if(p->log) farrlog(arr, s0*s1);
@@ -501,11 +509,13 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       if(p->convertfirst)
 	{
 	  if(p->conv!=NULL) convd(p->conv, arr, s0*s1);
-	  if(p->low<p->high) truncdarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncdarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	}
       else
 	{
-	  if(p->low<p->high) truncdarray(arr, s0*s1, p->low, p->high);
+	  if(p->fluxlow<p->fluxhigh)
+	    truncdarray(arr, s0*s1, p->fluxlow, p->fluxhigh);
 	  if(p->conv!=NULL) convd(p->conv, arr, s0*s1);
 	}
       if(p->log) darrlog(arr, s0*s1);
@@ -513,11 +523,11 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       break;
     case LONGLONG_IMG:
       printf("\n\n%s. BITPIX=%d (long long) Not supported!\n\n",
-	     p->inname, bitpix);
+	     p->imgname, bitpix);
       exit(EXIT_FAILURE);
     default:
       printf("\n\n%s. BITPIX=%d, Not recognized!\n", 
-	     p->inname, bitpix);
+	     p->imgname, bitpix);
       printf("\tAcceptable values are: %d, %d, %d, %d, %d, %d\n",
 	     BYTE_IMG, SHORT_IMG, LONG_IMG, FLOAT_IMG, 
 	     DOUBLE_IMG, LONGLONG_IMG);
@@ -525,10 +535,10 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       exit(EXIT_FAILURE);
     }
 
-  if(p->ibord!=0 || p->obord!=0)
+  if(p->iborder!=0 || p->oborder!=0)
     {
-      s0+=2*(p->ibord+p->obord);
-      s1+=2*(p->ibord+p->obord);
+      s0+=2*(p->iborder+p->oborder);
+      s1+=2*(p->iborder+p->oborder);
     }
 
   writeJSAMPLEtoJPEG(p, jsr, s0, s1);
