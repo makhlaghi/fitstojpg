@@ -1,4 +1,4 @@
-fitstojpg
+FITStoJPG
 =========
 
 Convert a FITS image to a grayscale or CMYK JPEG image.
@@ -12,7 +12,19 @@ standard used by astronomers to archive and use astronomical
 data. This package converts images saved in that format into gray
 scale or CMYK (with only the black channel being active) JPEG format
 images. The resolution of the output JPEG image is identical to the 
-input image.
+input image. Some of the capabilities of FITStoJPG can be listed as:
+
+* Using greyscale and CMYK colorspaces.
+* Convert all the possible extensions in a FITS image with one command.
+* Specify a box in the FITS image instead of converting the whole image.
+* Specify a flux range to emphasize on a special feature.
+* Convert pixel value (useful in segmentation maps).
+* Add inner and outer borders to the JPEG output.
+* Set the quality of the JPEG image.
+* Use logarithmic scale before saving as JPEG.
+* Inverts the colors by default (great for including in a document),
+  can be turned off.
+
 
 Why CMYK?
 ---------
@@ -59,7 +71,8 @@ if you want to convert to CMYK and also prints better.
 
 Requirements:
 ------------
-`fitstojpg` requires two packages to be installed on your
+
+FITStoJPG requires two packages to be installed on your
 machine, installing them is easy and straightforward. 
 
 - [IJG's libjpeg](http://www.ijg.org/), which should already be
@@ -71,66 +84,32 @@ machine, installing them is easy and straightforward.
 
 Installing and running:
 ------------
- 
-To install `fitstojpg`, after downloading or cloning it, all you have
-to do is to run `make` in the downloaded directory. In order to be
-able to run `fitstojpg` from anywhere on your system, run `make
-install` as root after the installation finishes.
 
-Some command line options can be given so you can customize the
-output, to learn them, run `./fitstojpg -h`.  A full list of all the
-options with some explanation and their default values will be shown.
-Nealy all the operation of `fitstojpg` can be defined by these input
-options and their arguments.  The [POSIX argument syntax
-conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax) apply.
+To install FITStoJPG, after downloading or cloning it, all you have
+to do is to run the standard configuring, compiling and installing
+commands in the downloaded directory (`$` as user and `#` as root):
 
-In short the options are:
-* `-h`: View details and default values of all the options.
-* `-v`: View only version and copyright information.
+    $ ./configure
+    $ make
+    # make install
 
-On/Off options:
-* `-l`: Logarithmic scaling.
-* `-n`: Don't inverse. By default the images are inversed 
-        because it is usually easier for printing and 
-	viewing astronomical images where a large number of 
-	pixels are sky noise.
-* `-a`: Convert all extentions in a multiextention FITS image.
-* `-t`: Set the top truncation pixel value as the highest pixel 
-        color (darkest by default or brightest if `-n` is 
-        called) pixel value.
-* `-b`: Similar to `-t` but for the lower truncation radius being
-        the lowest pixel color (brightest by default and darkest
-        if `-n` is called. With this and `-b` you can manually
-        set the color scale of the image.
+Command line options are used to specify how FITStoJPG operates. To
+get the full list of options and a short explanation of each, run
+`fitstojpg --help` or `fitstojpg -?`. 
 
-Options that require arguments:
-* `-i`: Input FITS filename.
-* `-e`: Input FITS extention.
-* `-o`: Output JPEG name.
-* `-u`: Quality of compression.
-* `-w`: Width in print in centimeters.
-* `-c`: Color space (grayscale or CMYK).
-* `-p`: Lower truncation pixel value.
-* `-q`: Higher truncation pixel value.
-* `-d`: Maximum byte value in output JPEG: [0-255].
-* `-f`: Width of black inner border in pixels.
-* `-g`: Width of white outer border in pixels.
-* `-j`: Crop: bottom left corner position (horizontal position).
-* `-k`: Crop: bottom left corner position (vertical position).
-* `-s`: Crop: top right corner position (horizontal position).
-* `-y`: Crop: top right corner position (vertical position).
-* `-r`: Convert pixel values.
 
 Future updates and issues:
 ------------
+
 1. Add much more functionality and generality.
 2. Work on a better user experience.
 3. Fix any bugs I have not found yet!
 
+
 Comments and suggestions:
 ----------------------------------------
 
-I hope `fitstojpg` will be useful for you. If you find any problems in
+I hope FITStoJPG will be useful for you. If you find any problems in
 this program please contact me so I can correct them. I would also be
 very glad to hear any suggestions or comments you might have, thank
 you.
@@ -150,15 +129,15 @@ Tohoku University Astronomical Institute
 
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-`fitstojpg` is free software: you can redistribute it and/or modify
+FITStoJPG is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-`fitstojpg` is distributed in the hope that it will be useful,
+FITStoJPG is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with `fitstojpg`.  If not, see <http://www.gnu.org/licenses/>.
+along with FITStoJPG.  If not, see <http://www.gnu.org/licenses/>.
