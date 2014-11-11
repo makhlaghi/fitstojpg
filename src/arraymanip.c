@@ -1,25 +1,23 @@
 /*********************************************************************
-fitstojpg - Convert FITS images to Grey scale JPEG images.
+FITStoJPG: Convert a FITS image to a JPEG image.
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-fitstojpg is free software: you can redistribute it and/or modify
+FITStoJPG is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-fitstojpg is distributed in the hope that it will be useful,
+FITStoJPG is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with fitstojpg. If not, see <http://www.gnu.org/licenses/>.
-
+along with FITStoJPG. If not, see <http://www.gnu.org/licenses/>.
 **********************************************************************/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
