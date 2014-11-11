@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT([FITStoJPG], [0.4], [makhlaghi@gmail.com], [fitstojpg],
         [https://github.com/makhlaghi/fitstojpg])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 AC_CONFIG_SRCDIR([src/ui.h])
 AC_CONFIG_HEADERS([config.h])
 

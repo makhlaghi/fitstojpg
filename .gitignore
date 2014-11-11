@@ -1,7 +1,7 @@
 *~
 *.jpg
 *.[oa]
-*.fits
+*.tar.gz
 
 Makefile
 config.h

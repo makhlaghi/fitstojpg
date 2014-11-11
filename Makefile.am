@@ -16,4 +16,4 @@
 ## http://astr.tohoku.ac.jp/~akhlaghi/
 
 SUBDIRS = src
-EXTRA_DIST = defaults.ac README.md
+EXTRA_DIST = defaults.ac
