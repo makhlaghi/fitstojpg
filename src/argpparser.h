@@ -44,7 +44,7 @@ const char *argp_program_bug_address=PACKAGE_BUGREPORT;
 
 
 
-static char args_doc[] = "FITSimage.fits JPEGimage";
+static char args_doc[] = "[JPEGimage] FITSimage.fits";
 
 
 
@@ -52,23 +52,11 @@ static char args_doc[] = "FITSimage.fits JPEGimage";
 
 const char doc[] = 
   /* Before the list of options: */
-  "\n" PACKAGE_STRING" -- Convert a FITS image to a JPEG image.\n"
+  "\n" PACKAGE_STRING"\nConvert a FITS image to a JPEG image. "
   "Configured for this machine on "CONFIGDATE", "CONFIGTIME".\n\n"
-  "If no output JPEG name is given, the output name will be the same as "
-  "the input FITS name with `.jpg` instead of `.fits`.\n\n"
-  "When calling the short format of the options, simply put your input "
-  "value after the short version of the option, an equal sign (=) should "
-  "not be used. For example, `-e4` or `-e 4` are the same as calling "
-  "`--imgext=4`.\n\n"
-  "The three capital letters after the long options indicate that providing "
-  "a value is mandatory if the option is called. The letters show the "
-  "format your input will be stored in:\n"
-  "   INT:  An integer.\n"
-  "   FLT:  A floating point number.\n"
-  "   STR:  A string of characters (for example a file name).\n\n"
-  "The default values for options are shown in the `[...]` immediately "
-  "before the description for that option. Defaults are set and can be "
-  "changed before running `./configure` in the `defaults.ac` file."
+  "See \"Running "PACKAGE_NAME"\" in the official documentation for more "
+  "detailed explanation. Official documentation can be found by running:"
+  "`info "PACKAGE"`.\n"
   /* After the list of options: */
   "\v"
   PACKAGE_NAME" home page: "PACKAGE_URL;
@@ -84,8 +72,8 @@ const char doc[] =
    4. Detection 
 
    Available letters for short options:
-   h i m o v x z
-   A B D E F G H I J K L M N O P Q R S T U W X Y Z
+   h i m v x z
+   A B D E F G H I J L M N O P Q R S T U W X Y Z
 
    Number keys used: <=500.
 
@@ -105,7 +93,7 @@ static struct argp_option options[] =
       'l',		      /* Short name or key for this option. */
       0,		      /* Informative type of value it gets. */
       0,                      /* Flags for this option. */
-      "Use logarithmic scaling.\n",
+      "Use logarithmic scaling.",
       -1		      /* Option group ID. */
     },
     {
@@ -113,9 +101,7 @@ static struct argp_option options[] =
       'n',
       0,
       0,
-      "By default the image is inverted such that the brightest pixels "
-      "are the darkest in the output. With this option, the brightest "
-      "will be white.\n",
+      "Don't inverse the input's flux",
       -1
     },
     {
@@ -123,7 +109,7 @@ static struct argp_option options[] =
       'a',
       0,
       0,
-      "Convert all the extensions in the FITS image.\n",
+      "Convert all the extensions in the FITS image.",
       -1      
     },
     {
@@ -131,8 +117,7 @@ static struct argp_option options[] =
       't',
       0,
       0,
-      "Set `--fluxhigh` to the maximum color, this is only relevant "
-      "when `--fluxhigh` is larger than the maximum flux in the image. \n",
+      "Set `--fluxhigh` to the maximum color.",
       -1      
     },
     {
@@ -140,17 +125,7 @@ static struct argp_option options[] =
       'b',
       0,
       0,
-      "Set `--fluxlow` to the minimum color, this is only relevant "
-      "when `--fluxlow` is smaller than the minimum flux in the image. \n",
-      -1      
-    },
-    {
-      "convfirst",
-      'C',
-      0,
-      0,
-      "First convert the pixels, then truncate the flux. By default the "
-      "opposite is done.\n",
+      "Set `--fluxlow` to the minimum color.",
       -1      
     },
 
@@ -164,12 +139,19 @@ static struct argp_option options[] =
       1				/* Group ID. */
     },
     {
+      "convfirst",
+      'C',
+      0,
+      0,
+      "First convert the pixels, then truncate the flux.",
+      1
+    },    
+    {
       "imgext",	
       'e', 		
       "INT",
       0,
-      "["DP_IMGEXT_T"] The input image fits extension number, starting "
-      "from 0 (zero).\n",
+      "["DP_IMGEXT_T"] FITS extension number, from 0 (zero).",
       1
     },
     {
@@ -177,8 +159,7 @@ static struct argp_option options[] =
       'p', 		
       "FLT",
       0,
-      "["DP_FLUXLOW_T"] The lower flux threshold on the image, if equal "
-      "to `--fluxhigh`, no threshold will be applied.\n",
+      "["DP_FLUXLOW_T"] Lower flux truncation value.",
       1
     },
     {
@@ -186,8 +167,7 @@ static struct argp_option options[] =
       'q', 		
       "FLT",
       0,
-      "["DP_FLUXHIGH_T"] The higher flux threshold on the image, if equal "
-      "to `--fluxlow`, no threshold will be applied.\n",
+      "["DP_FLUXHIGH_T"] Higher flux truncation value.",
       1
     },
     {
@@ -195,10 +175,7 @@ static struct argp_option options[] =
       'j', 		
       "INT",
       0,
-      "["DP_X1_T"] To convert only a small region of a larger FITS image. "
-      "This option sets the bottom left (when viewed in SAO ds9) box "
-      "corner position along the first FITS axis (horizontal in SAO ds9). "
-      "If `--x1`==`--x2` or `--y1==--y2`, then no cropping is done.\n",
+      "["DP_X1_T"] Bottom left corner of crop (first axis).",
       1
     },
     {
@@ -206,8 +183,7 @@ static struct argp_option options[] =
       'k', 		
       "INT",
       0,
-      "["DP_Y1_T"] The bottom left box corner position along the second "
-      "FITS axis, see explanation of `--x1`.\n",
+      "["DP_Y1_T"] Bottom left corner of crop (second axis).",
       1
     },
     {
@@ -215,8 +191,7 @@ static struct argp_option options[] =
       's', 		
       "INT",
       0,
-      "["DP_X2_T"] The top right box corner position along the first "
-      "FITS axis, see explanation of `--x1`.\n",
+      "["DP_X2_T"] Top right corner of crop (first axis).",
       1
     },
     {
@@ -224,8 +199,7 @@ static struct argp_option options[] =
       'y', 		
       "INT",
       0,
-      "["DP_Y2_T"] The top right box corner position along the second "
-      "FITS axis, see explanation of `--x1`.\n",
+      "["DP_Y2_T"] Top right corner of crop (second axis).",
       1
     },
     {
@@ -233,16 +207,8 @@ static struct argp_option options[] =
       'r', 		
       "STR",
       0,
-      "Convert pixel values prior to making the JPEG image. This can be "
-      "useful if segmentation maps, or images that keep labels of "
-      "defined regions are the input. In such cases, a group of pixels "
-      "have one label or value and this option might come in handy. By "
-      "default, conversion happens after trunctation, but this can be "
-      "changed with the `-C` option. In any case, it occurs before "
-      "logarithmic transformation. The syntax for conversion is like this:\n"
-      "\t`from_N:to_N,...,from_2:to_2,from_1:to_1`\n"
-      "The order of conversion is the opposite of input order (as labeled). "
-      "Note that no spaces must be used any where in the argument\n",
+      "String to convert values in this format:\n"
+      "\t`from_N:to_N,...,from_2:to_2,from_1:to_1`",
       1
     },
     
@@ -255,12 +221,27 @@ static struct argp_option options[] =
       2				
     },
     {
+      "keepnamedir",
+      'K',
+      0,
+      0,
+      "Keep directory information of input name.",
+      2      
+    },        
+    {
+      "output",
+      'o',
+      "STR",
+      0,
+      "Name of output file with any extension.",
+      2
+    }, 
+    {
       "quality",
       'u',
       "INT",
       0,
-      "["DP_QUALITY_T"] A value between >0 and <=100 with 100 begin the "
-      "maximum quality.\n",
+      "["DP_QUALITY_T"] A value between >0 and <=100 for quality.",
       2
     }, 
     {
@@ -268,10 +249,7 @@ static struct argp_option options[] =
       'w',
       "FLT",
       0,
-      "["DP_WIDTH_T"] The width of the JPEG image in centimeters. Note that "
-      "in most cases you will set the centimeter size based on the "
-      "published medium. In digital usage, only the number of pixels (that "
-      "is equal to the FITS image size) matters, not this value.\n",
+      "["DP_WIDTH_T"] The width of the JPEG image in centimeters.",
       2
     },
     {
@@ -279,8 +257,7 @@ static struct argp_option options[] =
       'c',
       "STR",
       0,
-      "["DP_COLORMODE_T"] One of these:\n\t`cmyk`: CMYK (blak channel "
-      "only).\n\t`gray`: Gray scale.\n",
+      "["DP_COLORMODE_T"] Colorspace: `cmyk` (only black) or `gray`.",
       2
     },
     {
@@ -288,8 +265,7 @@ static struct argp_option options[] =
       'd', 		
       "INT",
       0,
-      "["DP_MAXJPG_T"] The dynamic range of a JPEG image is 0-255. This "
-      "option specifies the maximum value.\n",
+      "["DP_MAXJPG_T"] Maximum value in JPEG image.",
       2
     },
     {
@@ -297,7 +273,7 @@ static struct argp_option options[] =
       'f', 		
       "INT",
       0,
-      "["DP_IBORDER_T"] Inner (black color) border width in pixels.\n",
+      "["DP_IBORDER_T"] Inner (black color) border width in pixels.",
       2
     },    
     {
@@ -305,7 +281,7 @@ static struct argp_option options[] =
       'g', 		
       "INT",
       0,
-      "["DP_OBORDER_T"] Outer (white color) border width in pixels.\n",
+      "["DP_OBORDER_T"] Outer (white color) border width in pixels.",
       2
     },
 
@@ -361,6 +337,9 @@ parse_opt(int key, char *arg, struct argp_state *state)
     case 'C':
       p->convertfirst=1;
       break;
+    case 'K':
+      p->removenamedir=0;
+      break;
 
     /* Input FITS image: */
     case 'e':
@@ -394,6 +373,12 @@ parse_opt(int key, char *arg, struct argp_state *state)
       
 
     /* Output JPEG image: */
+    case 'o':
+      if(p->outname)
+	argp_error(state, "Only one JPEG image name should be given.");
+      else
+	p->outname=arg;
+      break;
     case 'u':
       intrange(arg, &p->quality, "quality", key, 0, 100);
       break;
@@ -445,12 +430,9 @@ parse_opt(int key, char *arg, struct argp_state *state)
 	       || strcmp(&arg[strlen(arg)-5], ".JPEG")==0)
 	{
 	  if(p->outname)
-	    argp_error(state, "Only one JPEG image should be given.");
+	    argp_error(state, "Only one JPEG image name should be given.");
 	  else
-	    {
-	      p->outname=arg;
-	      p->freeoutname=0;
-	    }
+	    p->outname=arg;
 	}
       else
 	argp_error(state, "Argument not recognized as a FITS image "

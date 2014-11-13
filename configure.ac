@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([FITStoJPG], [0.4], [makhlaghi@gmail.com], [fitstojpg],
+AC_INIT([FITStoJPG], [0.5], [makhlaghi@gmail.com], [fitstojpg],
         [https://github.com/makhlaghi/fitstojpg])
 AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 AC_CONFIG_SRCDIR([src/ui.h])
@@ -31,7 +31,8 @@ AC_CHECK_FUNCS([strtol])
 
 #Tell configure which files to work on:
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+                 src/Makefile
+		 doc/Makefile])
 
 #Read the configuration date.
 AC_MSG_CHECKING([for date of configuration])
@@ -188,5 +189,6 @@ echo "AC_PACKAGE_STRING is now configured:"
 echo
 echo "You are now ready to compile AC_PACKAGE_STRING".
 echo "Simply run the commands: \`make\` then \`make install\`"
+echo "You can run \`make check\` before installing."
 echo "==================================================="
 echo

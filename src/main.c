@@ -42,19 +42,19 @@ along with FITStoJPG. If not, see <http://www.gnu.org/licenses/>.
 int 
 main(int argc, char *argv[])
 {
-  struct a2jparams in;
+  struct a2jparams p;
 
-  setparams(&in, argc, argv);   /* ui.c */
+  setparams(&p, argc, argv);   /* ui.c */
 
-  if(in.allext)
-    convertallext(&in);		     /* below! */
+  if(p.allext)
+    convertallext(&p);		     /* below! */
   else
-    convertoneext(&in);		     /* below! */
+    convertoneext(&p);		     /* below! */
 
-  if(in.freeoutname)
-    free(in.outname);
+  if(p.freeoutname)
+    free(p.outname);
 
-  freeconvstruct(in.conv);	     /* ui.c  */
+  freeconvstruct(p.conv);	     /* ui.c  */
 
   return 0;
 }
@@ -105,19 +105,15 @@ convertallext(struct a2jparams *p)
 
   numextinfits(p->imgname, &numext);  /* fitsarrayvv.c */
 
-  /* Check which name to use as base. */
-  if(p->freeoutname==0)/* an outname is supplied. */
-    findnamebase(p->outname, &base);
+  /* If outname has not been set, then find the base name here: */
+  if(p->outname==NULL)
+    findnamebase(p->imgname, &base, p->removenamedir); 
   else
-    {
-      /* Even though freeoutname was initially one, but it was not
-	 allocated in ui.c. It will be allocated here and freed
-	 here. */
-      p->freeoutname=0;
-      findnamebase(p->imgname, &base);  /* ui.c */
-    }
+    findnamebase(p->outname, &base, p->removenamedir);
 
-  p->outname=malloc(strlen(base)*sizeof *(p->outname));
+  /* Allocate space for outname. Add some extra space for the numbers
+     and extension.  */
+  p->outname=malloc((strlen(base)+50)*sizeof *(p->outname));
   assert(p->outname!=NULL);
 
   for(i=0;i<numext;i++)

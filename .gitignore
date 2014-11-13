@@ -1,5 +1,6 @@
 *~
 *.jpg
+*.pdf
 *.[oa]
 *.tar.gz
 
@@ -13,3 +14,4 @@ src/Makefile
 config.status
 src/runtest.sh
 autom4te.cache/
+doc/fitstojpg.t2p/

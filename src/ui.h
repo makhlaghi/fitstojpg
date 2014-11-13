@@ -43,7 +43,7 @@ void
 checkremoveoutimage(char *outname);
 
 void
-findnamebase(char *inname, char **out);
+findnamebase(char *inname, char **out, int removenamedir);
 
 struct conversion *
 makeconvstruct(char *arg);

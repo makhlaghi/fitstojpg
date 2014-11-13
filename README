@@ -1,18 +1,17 @@
-FITStoJPG
-=========
+FITStoJPG version 0.4
+=====================
 
 Convert a FITS image to a grayscale or CMYK JPEG image.
 
 Description:
 ------------
 
-The [FITS image
-standard](https://heasarc.gsfc.nasa.gov/docs/heasarc/fits.html) is the
-standard used by astronomers to archive and use astronomical
-data. This package converts images saved in that format into gray
-scale or CMYK (with only the black channel being active) JPEG format
-images. The resolution of the output JPEG image is identical to the 
-input image. Some of the capabilities of FITStoJPG can be listed as:
+The is the standard used by astronomers to archive and use
+astronomical data. This package converts images saved in that format
+into gray scale or CMYK (with only the black channel being active)
+JPEG format images. The resolution of the output JPEG image is
+identical to the input image. Some of the capabilities of FITStoJPG
+can be listed as:
 
 * Using greyscale and CMYK colorspaces.
 * Convert all the possible extensions in a FITS image with one command.
@@ -47,15 +46,6 @@ when you save a FITS image only in the K channel of the CMYK color
 space, you force the printer to only use its black ink, this results
 in a sharper printed image with the shades of grey being more clear,
 you also use less ink so it is also more cost-effective! 
-
-Take a look at the figure below as an example, where in each figure,
-the bottom left pixel is complete black and the top right pixel is
-complete white. The one on the left is a grey scale JPEG image and on
-the right is a CMYK JPEG image with only the K channel used.  I have
-taken a screen shot of how the two images compare when I included then
-in a LaTeX document and viewed them on my desktop monitor.
-
-<img src="https://raw.githubusercontent.com/makhlaghi/fitstojpg/master/doc/fitstojpg-figures/grey_CMYK_comp.png" width=600/>
 
 In print the ouputs are very similar. You see that the shades of grey
 in the left image (greyscale) are slightly more darker with a higher

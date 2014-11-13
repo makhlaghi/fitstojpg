@@ -1,0 +1,1139 @@
+\input texinfo @c -*-texinfo-*-
+@c %**start of header
+@setfilename fitstojpg.info
+@settitle FITStoJPG
+@documentencoding UTF-8
+@c@afourpaper
+
+@c %**end of header
+
+@include version.texi
+@set PACKAGE_NAME FITStoJPG
+@set PACKAGE fitstojpg
+
+@syncodeindex fn cp
+@syncodeindex vr cp
+@syncodeindex pg cp
+
+@dircategory Astronomy
+@direntry
+* fitstojpg: (FITStoJPG).  Convert FITS image to JPEG image.
+@end direntry
+
+@c Use section titles in cross references, not node titles.
+@xrefautomaticsectiontitle on
+
+
+
+
+
+
+
+
+
+
+@c Copyright information:
+@copying
+This manual is for FITStoJPG (version @value{VERSION},
+@value{UPDATED}) a highly customizable program to convert a FITS image
+into a JPEG image.
+
+Copyright @copyright{} 2014 Mohammad Akhlaghi.
+@email{akhlaghi@@astr.tohoku.ac.jp}
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is available on
+@url{http://www.gnu.org/copyleft/fdl.html}.
+@end quotation
+@end copying
+
+
+
+
+
+
+
+
+
+
+@c Print title information:
+@titlepage
+@title FITStoJPG
+@subtitle Convert a FITS image to a JPEG image.
+@subtitle for FITStoJPG version @value{VERSION}, @value{UPDATED}.
+@author Mohammad Akhlaghi
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+@contents
+
+
+
+
+
+
+
+
+
+
+@c Online version top information.
+@ifnottex
+@node Top, Overview, (dir), (dir)
+@top FITStoJPG
+
+FITStoJPG is a tool to convert a FITS image to a JPEG
+image. It can only convert a section of the image, or limit the flux
+range to be displayed as a JPEG image.
+
+Like the program, this manual will be constantly upgraded, so there
+might always be unwanted errors or parts of the text that can be
+explained better. We would be most grateful if you could inform us if
+you spot any such cases.
+
+@ifhtml
+To navigate easily in this webpage, you can use the @code{Next},
+@code{Previous}, @code{Up} and @code{Contents} links in the top and
+bottom of each page. @code{Next} and @code{Previous} will take you to
+the next or previous topic in the same level, for example from chapter
+1 to chapter 2 or vice versa. To go to the sections or subsections,
+you have to click on the menu entries that are there when ever a
+sub-component to a title is present.
+@end ifhtml
+
+@end ifnottex
+
+@menu
+* Overview::                    An overview of FITStoJPG.
+* Installation::                Install FITStoJPG and dependencies.
+* Running::                     Details of running FITStoJPG.
+* Future updates::              Planned updates for the future.
+* Index::                       Complete index.
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+Overview
+
+* Quick start::                 Build, check, install and run
+* FITSJPEGcolor::               FITS, JPEG and color background information.
+* Free software::               FITStoJPG license.
+
+Installation
+
+* Requirements::                Requirements of FITStoJPG.
+* Installing FITStoJPG::        Install FITStoJPG.
+
+Requirements
+
+* libjpeg::                     About and installation of libjpeg.
+* CFITSIO::                     About and installation of CFITSIO.
+
+Installing FITStoJPG
+
+* Default parameters::          Setting the default parameters.
+* Configuring::                 How to configure FITStoJPG.
+* Tests::                       Test programs.
+* Print manual::                How to rebuild the print manual.
+
+Running FITStoJPG
+
+* Getting help::                Guidelines on getting help.
+* Command line options::        Command line options.
+
+Command line options
+
+* Input FITS image::            Options relating to the input FITS image.
+* Output JPEG image::           Ouput JPEG image options.
+* Operating modes::             Operating mode options.
+
+@end detailmenu
+@end menu
+
+@c Copyright information for HTML and Text versions:
+@ifplaintext
+@noindent
+---------------------------
+
+@noindent
+Copyright notice:
+@insertcopying
+@end ifplaintext
+
+@ifhtml
+
+Copyright notice:
+@insertcopying
+@end ifhtml
+
+
+
+
+
+
+
+
+
+
+@node Overview, Installation, Top, Top
+@chapter Overview
+
+@cindex FITS
+@cindex JPEG
+The FITS image standard is the primary method that data are archived
+and used in astronomy. On the other hand, one of the most convenient
+standards to view images on the computer or in print is the JPEG
+standard. FITStoJPG was build to be a simple and fast command line
+converter (with various options for specialized behaviour) from the
+former to the latter. Some of the benefits provided by FITStoJPG are:
+
+@itemize
+
+@item
+Very few dependencies: installed easily
+
+@item
+Very fast processing.
+
+@item
+Save the FITS image into the black channel of a CMYK color space JPEG
+image or a grey scale JPEG image. Both take much less memory than
+existing converters to RGB. Some journals require CMYK.
+
+@item 
+Convert all the extensions of a FITS image with one command.
+
+@item
+Only convert a portion of the FITS image.
+
+@item
+Set pixel value limits or logarithmic scale for the demonstration of
+the FITS image.
+
+@item
+Convert pixel values before saving output (useful in segmentation
+maps).
+
+@item
+Set the compression level (quality) of the JPEG image.
+
+@item
+Make an inner and outer border for the JPEG image.
+
+@item
+Uses the most basic command line tools available in any GNU/Linux
+system, so it can easily be run on a large number of images.
+
+@end itemize
+
+@menu
+* Quick start::                 Build, check, install and run
+* FITSJPEGcolor::               FITS, JPEG and color background information.
+* Free software::               FITStoJPG license.
+@end menu
+
+@node Quick start, FITSJPEGcolor, Overview, Overview
+@section Quick start
+
+@cindex Uncompress source
+@cindex Source, uncompress
+@cindex Build
+@cindex Compile
+@cindex Check
+@cindex Test
+Lets assume you have just downloaded the
+@file{@value{PACKAGE}-@value{VERSION}.tar.gz} in @file{DOWLD}. Running
+the following commands will unpack, compile, check and install
+@value{PACKAGE_NAME} so you can use it anywhere in your system. Note
+lines starting with @command{$} should be run as a user and those with
+@command{#} as root. In either case, these two characters should not
+be typed in the command line.
+
+@example
+$ cd DOWLD
+$ tar -zxvf @value{PACKAGE}-@value{VERSION}.tar.gz
+$ cd @value{PACKAGE}-@value{VERSION}
+$ ./configure
+$ make
+$ make check
+$ su
+# make install
+@end example
+
+@noindent
+If @command{$ ./configure} complains about a requirement, see
+@ref{Installation}. After running @command{$ make check}, a few tests
+will be done on a small test FITS image provided with the source
+code. They shouldn't fail, if they do please file a bug report. You
+can see the ouput @file{.jpg} images in
+@file{DOWLD/@value{PACKAGE}-@value{VERSION}/src/}.
+
+@cindex Quick example
+@cindex Example, quick
+Once it is installed, you can convert a FITS image named
+@file{FITSimage.fits} to JPEG with the default settings by running
+@command{$ @value{PACKAGE} FITSimage.fits} on the command line. The
+JPEG image will be named @file{FITSimage.jpg} in the current
+directory. To see all the options at any time, run @command{$
+@value{PACKAGE} --help} or @command{$ @value{PACKAGE}
+-?}. @xref{Running}, for a detailed explanation on the command line
+options. Finally, you can access this whole manual anywhere on the
+command line with @command{info @value{PACKAGE}}.
+
+
+
+
+
+@node FITSJPEGcolor, Free software, Quick start, Overview
+@section FITS, JPEG and color spaces
+
+@cindex FITS standard
+@cindex Standard, FITS
+@cindex Standard, JPEG
+It is necessary to provide some background information on FITS images,
+JPEG images and color spaces in general, but here only the most
+general topics can be discussed.  Therefore we just suffice to this
+short section. For the intricacies of the FITS standard, the
+interested reader can read the
+@url{http://labs.adsabs.harvard.edu/adsabs/abs/2010A%26A...524A..42P/,
+FITS standard (3.0)}, Note that unless otherwise stated, by FITS
+image, we mean one image extension of a FITS file. For the fascinating
+details of color spaces, please see the
+@url{http://en.wikipedia.org/wiki/Color_space, Wikipedia entry}.
+
+@cindex RGB
+@cindex CMYK
+@cindex Image
+@cindex Grayscale
+@cindex Colorspace
+@cindex Primary colors
+@cindex Colorspace, grayscale
+An image is a two dimentional array of small 2 dimentional elements
+called pixels. If each pixel only has one value, the image is known as
+a grayscale image and no color is defined. The range of values in the
+image can be interpreted as shades of any color, it is customary to
+use shades of black or grayscale. However, to produce the color
+spectrum in the digital world, we need to mix several primary
+colors. Therefore in a color image, each pixel has several values
+depending on how many primary colors we choose. For example on the
+digital monitor or a color digital cameras, all colors are built by
+mixing the three colors of Red-Green-Blue (RGB) with various
+proportions. However, for printing on paper, standard printers use the
+Cyan-Magenta-Yellow-Key (CMYK, Key=black) color space. Therefore when
+printing an RGB image, usually a transformation of color spaces will
+be necessary.
+
+In a colored digital camera, a color image is produced by dividing
+pixel's area between three colors (filters). However in astronomy due
+to the intrinsic faintness of most of our targets, the collecting area
+of the pixel is very important for us. Hence the full area of the
+pixel is used and one value is stored for that pixel in the end. One
+filter is used for the whole image. Thus a FITS image is inherently a
+grayscale image and no color can be defined for it.
+
+@cindex Colorspace, transformation
+One way to represent a grayscale image is to use the same proportions
+of the primary colors in each pixel. This is the common way most FITS
+image converters work: they fill all the channels with the same
+values. The downside is two fold:
+
+@itemize
+
+@item
+Three (for RGB) or four (for CMYK) values have to be stored for every
+pixel, this makes the output file very heavy.
+
+@item
+If printing, the printing errors of each color channel can make the
+printed image slightly more blurred than it actually is.
+
+@end itemize
+
+@cindex Single channel CMYK
+To solve both these problems, the only way is to save the FITS image
+into the black channel of the CMYK color space. In the RGB color space
+all three channels have to be used. The JPEG standard is the only
+common standard that accepts CMYK color space, that is why we chose
+the JPEG standard and not the PNG standard for example.
+
+@cindex 8-bit JPEG
+@cindex 12-bit JPEG
+The JPEG standard sets two sizes for the number of bits in each
+channel: 8-bit and 12-bit. The former is by far the most common and is
+what we use in FITStoJPG. Therefore, each channel should have values
+between 0 to @math{2^8-1=255}. From this we see how each pixel in a
+grayscale image is one byte (8 bits) long, in an RGB image, it is
+3bytes long and in CMYK it is 4bytes long. But thanks to the JPEG
+compression algorithms, when all the pixels of one channel have the
+same value, that channel is compressed to one pixel. Therefore a
+Grayscale image and a CMYK image that has only the K-channel filled
+are approximately the same file size.
+
+
+
+@node Free software,  , FITSJPEGcolor, Overview
+@section Free software
+
+@cindex Freedom
+@cindex Free software
+@cindex Software, free
+FITStoJPG is distributed and available to you under the
+@url{http://www.gnu.org/copyleft/gpl.html, GNU public license} version
+3 or any later version (GPL v3+). Free software and tools (as defined
+in GPL v3+) is essential for critical science to flurish. A very large
+number of packages (scientific and unscientific) use this license for
+distribution. Therefore if you are not already familiar with it, we
+strongly encourage you to put the time and read through it once. It
+gives you a lot of @emph{free}doms. As with all kinds of freedom
+unless you utilize your freedom, you cannot consider your self to be
+free.
+
+
+
+
+
+
+
+@node Installation, Running, Overview, Top
+@chapter Installation
+
+To successfully install FITStoJPG you have to have the requirements
+already installed on your system. They are very basic and you might
+already have them installed, to check try running the @command{$
+./configure} script. If you get no errors, then you already have them
+and you can skip @ref{Requirements}. You can do much more than the
+simple set of scripts in @ref{Quick start}, for example you can set
+the default paramters, to learn more, see @ref{Installing FITStoJPG}.
+
+
+@menu
+* Requirements::                Requirements of FITStoJPG.
+* Installing FITStoJPG::        Install FITStoJPG.
+@end menu
+
+@node Requirements, Installing FITStoJPG, Installation, Installation
+@section Requirements
+
+@cindex Dependencies, FITStoJPG
+@cindex FITStoJPG dependencies
+FITStoJPG @value{VERSION} has two dependencies: libjpeg and
+CFITSIO. The first is for manipulating JPEG images and the second for
+FITS images.
+
+@menu
+* libjpeg::                     About and installation of libjpeg.
+* CFITSIO::                     About and installation of CFITSIO.
+@end menu
+
+@node libjpeg, CFITSIO, Requirements, Requirements
+@subsection libjpeg
+
+@cindex libjpeg
+@cindex SIMD instructions
+@url{http://www.ijg.org/, libjpeg} is a very basic library that
+provides tools to read and write JPEG images, most of the GNU/Linux
+graphic programs and libraries use it. Therefore you most probably
+already have it installed.  @url{http://libjpeg-turbo.virtualgl.org/,
+libjpeg-turbo} is an alternative to libjpeg. It uses SIMD instructions
+for ARM based systems that significantly decreases the processing time
+of JPEG compression and decompression algorithms.
+
+If @command{$ ./configure} fails to find libjpeg, then you have to
+install one of the two libraries above. They should be available
+within your distribution's package management tools, for example
+
+@cindex Package managers
+@itemize
+
+@item
+@command{# pacman -S libjpeg} in Arch Linux (which installs
+libjpeg-turbo).
+
+@item
+@command{# apt-get install libjpeg} in Ubuntu.
+
+@item
+@command{# yum install libjpeg} in Fedora, CentOS, Scientific linux or
+generally any Red Hat based GNU/Linux.
+
+@end itemize
+
+
+
+
+
+@node CFITSIO,  , libjpeg, Requirements
+@subsection CFITSIO
+
+@cindex CFITSIO
+CFITSIO is the closest you can get to the pixels in a FITS image while
+remaining faithful to the
+@url{http://fits.gsfc.nasa.gov/fits_standard.html, FITS standard}. It
+is written by William Pence, the author of the
+@url{http://labs.adsabs.harvard.edu/adsabs/abs/2010A%26A...524A..42P/,
+FITS standard (3.0)}, and is regularly updated. Setting the
+definitions for all other software packages using FITS images.
+
+Some GNU/Linux distributions have CFITSIO in their package managers
+(for example Arch Linux), if it is available and updated, you can use
+it. If not, you can install it from source, in this case, we strongly
+recommend that you have a look through Chapter 2 (Creating the CFITSIO
+library) of the the CFITSIO manual and understand the options you can
+pass to @command{$ ./configure}. This is a very basic package for most
+astronomical software and it is best that you configure it nicely with
+your system. To install CFITSIO from source, you have to
+@url{ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio_latest.tar.gz,
+download the latest version}, uncompress it and go into the downloaded
+directory. Since CFITSIO also uses GNU Autoconf and GNU Automake, the
+installation is very similar to that explained in @ref{Installing
+FITStoJPG}.
+
+
+
+
+
+@node Installing FITStoJPG,  , Requirements, Installation
+@section Installing FITStoJPG
+
+This section is basically a longer explanation to the sequence of
+commands given in @ref{Quick start}. If the default parameters are
+fine for your applications, or you are already familiar with those
+commands, or you don't want to remake this manual, you can skip this
+section.
+
+In the following we will assume that you have downloaded the
+compressed source file, @file{@value{PACKAGE}-@value{VERSION}.tar.gz},
+to the @file{DOWLD} (short for download) directory, replace this name
+with the directory that you want to run the installation in. Note that
+after installation, if you don't plan to re-install you no longer need
+this file or the uncompressed directory. The first three steps in
+@ref{Quick start} need no extra explanation so in the following we
+also assume they are done. Once you uncompress the source file the
+directory @file{DOWLD/@value{PACKAGE}-@value{VERSION}} will be
+created. From now on, we will call this directory @file{SCRDIR}.
+
+FITStoJPG uses GNU Autoconf and GNU Automake to configure and build
+FITStoJPG in your particular system. These tools are highly
+customizable to fit any kind of system. A complete explanation is
+beyond the scope of this manual but enough acquaintance with these
+tools will significantly enhance your life in the GNU/Linux ecosystem.
+
+FITStoJPG has been written and only tested on GNU/Linux, I am curious
+to see if it is possible to install it on other systems (for example
+Mac OS or MS-Windows) too. However, I don't have and use such
+proprietary operating systems. So if you would like it there and are
+willing to help, please contact me, see @ref{Future updates}.
+
+@menu
+* Default parameters::          Setting the default parameters.
+* Configuring::                 How to configure FITStoJPG.
+* Tests::                       Test programs.
+* Print manual::                How to rebuild the print manual.
+@end menu
+
+@node Default parameters, Configuring, Installing FITStoJPG, Installing FITStoJPG
+@subsection Default parameters
+
+@cindex Parameters, default
+@cindex Default parameters
+FITStoJPG relies on a default set of parameters, the parameters are
+explained completely in @ref{Running}. You can set most of the default
+paramters before running the @command{$ ./configure} script. For
+example, the default FITS extension of the FITS image to convert is
+set to 0 or the first FITS extension. If you are mostly working on raw
+images from telescopes, usually the first image extension is in the
+second fits extension or extension number 1. So everytime you want to
+run FITStoJPG you will have to specifically mention this, for example
+in one the the two ways below:
+
+@cindex Extension, example
+@example
+$ @value{PACKAGE} FITSimage.fits --imgext=1
+$ @value{PACKAGE} FITSimage.fits -e1   
+@end example
+
+@cindex @file{defaults.ac}
+@noindent
+Sometimes you might forget to include this option and you will be
+confronted with a criptic CFITSIO error! To decrease such frustrating
+cases, all the default values for the options are defined in a separte
+file called @file{SRCDIR/defaults.ac}. This is a simple shell script
+that is run by configure which will hard copy the given default values
+into the compilation of FITStoJPG. Therefore once @command{$
+./configure} is run, you can no longer change these default
+values. The values of the given parameters are checked by configure
+and if there is a problem, configure will warn you to fix it.
+
+@cindex Change default parameters
+@cindex Parameters, change defaults
+To change the default values after building or installing, you have to
+re-run @command{$ ./configure} with the new parameters in
+@file{SRCDIR/defaults.ac} and re-do the next steps.
+
+
+
+
+
+@node Configuring, Tests, Default parameters, Installing FITStoJPG
+@subsection Configuring
+
+The @command{$ ./configure} step is the most important step in the
+build process. All the required packages, libraries, headers and
+environment variables are checked in this step. The behaviours of make
+and make install can also be set through command line options to this
+command. A complete explanation of these options is beyond the scope
+of this short manual. But we will try to review the most important
+cases.
+
+@cindex root, not possible
+@cindex Superuser, not possible
+In case you do not have super user or root access to the system, you
+can't take the last two steps of the command sequence in @ref{Quick
+start}. To be able to access the built @file{fitstojpg} execuable file
+from anywhere, you have to specify special directory in your owned
+directories, for example @file{MYUSR}, and tell configure to install
+the compiled file to this directory through the command:
+
+@cindex Install directory
+@cindex Directory, install
+@example
+$ ./configure --prefix=MYUSR
+@end example
+
+@noindent
+You will also have to add @file{MYUSR} to your @command{PATH}
+environment variable. If you have a specific file for @file{MYUSR},
+you can do this for all programs that use the GNU build system, not
+just FITStoJPG.
+
+
+
+
+
+@node Tests, Print manual, Configuring, Installing FITStoJPG
+@subsection Tests
+
+@cindex @command{make check}
+@cindex @file{mock.fits}
+@cindex Tests, running
+@cindex Checking tests
+Several simple tests and a very small multi-extension FITS image is
+also included in the downloaded package: @file{SRCDIR/src/}. The tests
+scripts are all the files ending with @file{.sh} and they all run on
+the FITS file @file{mock.fits}. @file{mock.fits} was created with
+MockGals which is used to make mock images. It has three extensions:
+the unconvolved mock galaxy image, the convolved mock galaxy image and
+the convolved and noisy mock galaxy image. You can run the tests after
+you have built the package (with @command{$ make}) with the command:
+
+@example
+$ make check
+@end example
+
+@cindex Tests, results
+@cindex Results of tests
+If you are using a sufficiently modern terminal, the outcome of the
+tests will be either colored green, showing that all the tests passed
+successfully, or red showing that at least one test failed. None of
+the tests should fail. If any does fail, please inform us so we see
+what the problem was.
+
+@cindex Tests, @file{.sh} scripts
+@cindex Shell test scripts
+By examining the @file{.sh} test scripts, you can see some example of
+how FITStoJPG is best used. Note that when running the test scripts,
+you haven't intalled FITStoJPG yet, that is why it is called with the
+@command{./fitstojpg}. After you install it, you don't need the
+preceding @command{fitstojpg}. To be more educative, we have also only
+used the long format of the options, when typing on the command line,
+it might be easier for you to use the short formats. Generally, when
+writing a script (that you will save for future use) it is advised to
+use the long formats of the options, because the short ones will soon
+be forgotten.
+
+The tests will be increased in time to include all the capabilities of
+FITStoJPG. So if the tests pass, you can safely install the FITStoJPG
+on a system-wide directory.
+
+
+
+
+
+@node Print manual,  , Tests, Installing FITStoJPG
+@subsection Print manual
+
+@cindex Print manual
+@cindex Modifying print manual
+@cindex A4 paper size
+@cindex US letter paper size
+@cindex Paper size, A4
+@cindex Paper size, US letter
+The default print manual is provided in the letter paper size. If you
+would like to have the print version of this manual on paper and you
+are living in a country which uses A4, then you can rebuild the
+manual. The great thing about the GNU build system is that the manual
+source code which is in Texinfo is also distributed with the program
+source code, enabling you to do such customizations (hackings).
+
+In order to change the paper size, you will need to have @TeX{}
+installed. Open the @file{SRCDIR/doc/fitstojpg.texi} with any text
+editor. This is the source file that created this manual. In the first
+few lines you will see this line:
+
+@example
+@@c@@afourpaper
+@end example
+
+@noindent
+In Texinfo, a line is commented with @code{@@c}. Therefore, uncomment
+this line by deleting the first two characters such that it changes
+to:
+
+@example
+@@afourpaper
+@end example
+
+@noindent
+Save the file and close it. You can now run
+
+@example
+$ cd SRCDIR
+$ make pdf
+@end example
+
+@noindent
+and the new pdf manual will be available in
+@file{SRCDIR/doc/@value{PACKAGE}.pdf}. By changing the @command{pdf}
+in @command{$ make pdf} to @command{ps} or @command{dvi} you can have
+the manual in those formats. Note that you can do this for any manual
+that is in Texinfo format, they might not have 
+
+
+
+
+
+
+
+
+
+
+@node Running, Future updates, Installation, Top
+@chapter Running FITStoJPG
+
+@cindex Example, quick
+The most basic way to run FITStoJPG is with the command @command{$
+fitstojpg FITSimage.fits}. This will create a JPEG image which is
+named @file{FITSimage.jpg} in the current directory.
+
+FITStoJPG only has one mandatory argument: the input FITS image name
+(which has to end in @file{.fits}. The output JPEG name can also be
+given as an argument but it is optional. If no JPEG image name is
+given as an argument, then the name of the output will be determined
+from the input file's name. All the potential directory structure
+attached to it stripped off and the ending is changed to
+@file{.jpg}. For example:
+
+@example
+$ pwd
+/home/username/JPEGfiles
+$ ls
+ABC001.jpg
+$ fitstojpg /home/username/FITSarchive/ABC002.fits
+$ ls
+ABC001.jpg ABC002.jpg
+@end example
+
+Besides the input FITS image, you can also @emph{optionally} specify
+the name of the output JPEG image on the command line without any
+options. Any name that ends with @file{.jpg}, @file{.JPG},
+@file{.jpeg} or @file{.JPEG} will be considered as an output JPEG
+image name. Note that if it already exists, the existing file will
+silently be replaced.
+
+@menu
+* Getting help::                Guidelines on getting help.
+* Command line options::        Command line options.
+@end menu
+
+@node Getting help, Command line options, Running, Running
+@section Getting help
+
+So you are busy writing your report or paper and suddenly feel it
+would be great if you could include a FITS image in the document for
+evidence of what you are trying to say, after all, they say ``one
+image is worth a thousand words''. But you have forgot the names of
+the options or the default values and don't feel like finding the PDF
+file you might have saved or printed in your archives or to go to the
+internet. You want to get back to your exciting science as fast as
+possible. Here are some ways you can get to what you want very
+fast. Note that these apply to most GNU/Linux programs, not just
+FITStoJPG.
+
+@itemize
+
+@item
+The easiest and fastest way is to run @command{$ @value{PACKAGE}
+--help}. This will print a list of all the options, their default
+values and a short discription. The default values for each option
+with a value are specified inside square brackets immediately before
+the explanation for that option, for example:
+@example
+-g, --oborder=INT [0] Outer (white color) border width in pixels.
+@end example
+
+@item
+If you know the values you want to supply but forgot the exact short
+option characters or long option name, you can run @command{$
+@value{PACKAGE} --usage}. This will give you a compact but full list
+of all the options in both short and long format.
+
+@item
+In case you need more information than @option{--help} can provide,
+and you think a look through the manual would be great, run
+@example
+$ info @value{PACKAGE}
+@end example
+This will open up this whole document in the command line and you can
+easily navigate it using the fabulously easy and useful @command{info}
+program. Incase you are not familiar with it already, put aside half
+an hour of your time and run @command{$ info info}, it does a
+fantastic job in explaining all its capabilities its self. Since all
+GNU software documentation is also provided in info, your whole
+GNU/Linux life will significantly become easier. Once your become
+efficient in it, you can navigate to any part of this manual or any
+other GNU software manual, no matter how long it is, in a matter of
+seconds. It also blends nicely with GNU Emacs (a text editor) and you
+can search manuals while you are writing your document or programs
+without taking your hands off the keyboard.
+
+@end itemize
+
+@node Command line options,  , Getting help, Running
+@section Command line options
+
+You can specify the behaviour of @value{PACKAGE_NAME} with command
+line options.  The same rules that specify the command line options in
+nearly all GNU/Linux programs also apply for @value{PACKAGE_NAME},
+here are some of the factors:
+
+@itemize
+
+@item
+Each option can be called in two ways: @emph{short} or @emph{long}. In
+the list below, for options that have both formats, first the short is
+shown then the long. Short options are only one character and only
+have one hyphen (for example @option{-e}) while long options have two
+hyphens an can have many characters (for example @option{--imgext}.
+
+@item
+Some options need to be given a value if they are called and some
+don't. You can think of the latter type of options as an on/off
+option. For example all the options in @ref{Operating modes} are
+on/off options with no values. In @value{PACKAGE_NAME}'s
+@option{--help} output, if a value is required, one of the three cases
+below follows the long option:
+
+@itemize
+
+@item
+@option{=INT}: The value is read as an integer.
+
+@item
+@option{=FLT}: The value is read as a float.
+
+@item
+@option{=STR}: The value is read as a strong (for example a file
+name).
+
+@end itemize
+
+In this manual, the same values will be put immediately before the
+explanation, for example (@option{=INT}), (@option{=FLT}) or
+(@option{=STR}).
+
+@item
+To specify a value in the short format, simply put the value after the
+option (with or without white space). For the long option you either
+need white space or an @option{=} sign, for example @option{-e2},
+@option{-e 2}, @option{--imgext 2} or @option{--imgext=2} are all
+equivalent.
+
+@item
+Short options with no values can be concatenated for example the
+hypothetical options @option{-a -b -c4} is equivalent to
+@option{-abc4}.
+
+@item
+In the long format, you don't have to write the full option name, only
+long enough for the option to be unambiguously identified. If it is
+ambiguous, then @value{PACKAGE_NAME} will warn you.
+
+@end itemize
+
+We will not discuss the default values of the options in this manual,
+because you can change them at configure time (see @ref{Default
+parameters}) and the differing values might confuse you.
+
+@cindex Options
+@menu
+* Input FITS image::            Options relating to the input FITS image.
+* Output JPEG image::           Ouput JPEG image options.
+* Operating modes::             Operating mode options.
+@end menu
+
+
+
+
+
+@node Input FITS image, Output JPEG image, Command line options, Command line options
+@subsection Input FITS image
+
+These options are related to the input FITS image.
+
+@vtable @option
+
+@item -C
+@itemx --convfirst
+First convert the pixel values (see @option{--convert}), then truncate
+the flux. By default if both actions are required, the opposite order
+is done.
+
+@item -e
+@itemx --imgext
+(@option{=INT}) The input FITS image extension, starting from
+zero.
+
+@item -j
+@itemx --x1
+(@option{=INT}) Along with @option{--y1}, @option{--x2} and
+@option{--y2} you can specify the two corners of a inside the input
+image to convert to a JPEG image. The rest of the input image is
+ignored. The positions and axises are all based on the FITS
+standard. So the bottom left corner (when you view the FITS image in
+SAO ds9) of the FITS image is at @option{--x1=1} and
+@option{--y1=1}. The X axis is the horizontal axis (same as SAO ds9)
+and the Y axis is the vertical axis. if @option{--x1}=@option{--x2} or
+@option{--y1}=@option{--y2}, then no cropping is done.
+
+@item -k
+@itemx --y1
+(@option{=INT}) See @option{--x1}.
+
+@item -s
+@itemx --x2
+(@option{=INT}) See @option{--x1}.
+
+@item -y
+@itemx --y2
+(@option{=INT}) See @option{--x1}.
+
+@item -p
+@itemx --fluxlow
+(@option{=FLT}) The lower flux truncation value. If it is equal to
+@option{--fluxhigh}, then no truncation will be applied. If the input
+image is not float, the value will be converted to the type of the
+input image.
+
+@item -q
+@itemx --fluxhigh
+(@option{=FLT}) The higher flux truncation value. See
+@option{--fluxlow}.
+
+@item -r
+@itemx --convert
+(@option{=STR}) Convert pixel values prior to making the JPEG
+image. This can be useful if segmentation maps, or images that keep
+labels of defined regions are the input. In such cases, a group of
+pixels have one label or value and this option might come in handy. By
+default, conversion happens after trunctation, but this can be changed
+with the @option{-C} option. In any case, it occurs before a possible
+logarithmic transformation. The syntax for conversion is like this:
+@example
+from_N:to_N,...,from_2:to_2,from_1:to_1
+@end example
+The order of conversion is the opposite of input order (as
+labeled). Note that no spaces must be used any where in the value
+given to this or any other option.
+
+@end vtable
+
+
+
+@node Output JPEG image, Operating modes, Input FITS image, Command line options
+@subsection Output JPEG image
+
+These options relate to the output JPEG image.
+
+@vtable @option
+
+@item -c
+@itemx --colormode
+(@option{=STR}) Specify the color mode of the output image. For the
+CMYK color space where only the black channel is filled use
+@option{cmyk} and for the grayscale color space use @option{gray} as
+values to this option.
+
+@item -d
+@itemx --maxjpg
+(@option{=INT}) Specify the maximum value in the JPEG image. Recall
+that a JPEG image has values from 0 to 255. No pixel in the output
+JPEG image will have a value larger than the value of this
+option. Needless to say, it cannot exeed 255!
+
+@item -f
+@itemx --iborder
+(@option{=INT}) The width of the inner (black) border of the image in
+units of pixels.
+
+@item -g
+@itemx --oborder
+(@option{=INT}) The width of the outer (white) border of the image in
+units of pixels.
+
+@item -K
+@itemx --keepnamedir
+Keep the possible directory information of the input FITS image name.
+
+@item -o
+@itemx --output
+(@option{=STR}) Name of output JPEG image. Unlike the name that can be
+specified as an optional argument, this name can have any extension.
+
+@item -u
+@itemx --quality
+(@option{=INT}) A value between @math{>0} and @math{\leq100}. 100 is
+the maximum quality (no compression).
+
+@item -w
+@itemx --width
+(@option{=FLT}) The width of the JPEG image in centimeters. Note that
+as long as you are only deality with digital media like a webpage or
+viewing on the computer, the number of pixels are important, not this
+width value. When you put the image into a document, then this value
+will become important. 
+
+@end vtable
+
+
+
+@node Operating modes,  , Output JPEG image, Command line options
+@subsection Operating modes
+
+These options relate to both the input and output images, so we list
+them together here. None of the options here need a value.
+
+@vtable @option
+
+@item -?
+@itemx --help
+Print out a short help message showing all the options with a brief
+explanation, see @ref{Getting help}.
+
+@item -a
+@itemx --allext
+Convert all the extensions in the FITS image. If a JPEG name is
+supplied (for example @file{test.jpg}), the extentions will be named
+@file{tests_1.jpg}, @file{test_2.jpg} and etc. Otherwise the base name
+of the input FITS image is used.
+
+@item -b
+@itemx --btrunccolor
+Set @option{--fluxlow} to the minimum channel pixel value. This is
+only relevant when the value of @option{--fluxlow} is smaller than the
+minimum flux in the image. In practice, the effect of using this
+option properly is that the faint end color which is white in the
+default inverse mode (and black if in normal mode) will not be purely
+white (black). Depending on how much lower @option{--fluxlow} is from
+the minimum pixel value in the image, the whitest (blackest) pixel
+will be darker (brighter) than pure white (black).
+
+@item -l
+@itemx --log
+Use the logarithmic scale for converting the input flux to the output
+image.
+
+@item -n
+@itemx --noinv
+By default the input image is inverted, such that the brightest pixel
+in the FITS image becomes the darkest pixel in the output JPEG
+image. Since the majority of the area of most astronomical images are
+blank sky (noise), this makes identifying the object on paper or in a
+PDF file much easier and blends in with the paper. It also saves a lot
+of ink if you decide to print the document.
+
+@item -t
+@itemx --ttrunccolor
+This is very similar to @option{--btrunccolor} but for the brightest
+pixel in the input image and the blackest (whitest if in inverse mode)
+pixel in the output image.
+
+@item --usage
+Print a very compact list of all the options.
+
+@item -V
+@itemx --version
+Print the version and copyright information.
+
+@end vtable
+
+
+
+
+@node Future updates, Index, Running, Top
+@chapter Future updates
+There are many things to do, this is my current to-do list. I will try
+to implement them when ever I get some time. Currently I don't have
+any rush because I don't immediately need these capabilities. But as
+soon as I find some free time they will be implemented.  If you feel
+these updates, or other updates can be useful for your work, please
+contact me so we can implement them. If you are familiar enough with
+the C programming language, it would be great if you could also
+contribute so it can be done faster. Ofcourse, all contributions will
+be respectfully acknowledged.
+
+In case you have any suggestions which you would like FITStoJPG to do,
+please also inform me to add to this list and implement in due time.
+
+@itemize
+
+@item
+Use three or four FITS images to make an RGB or CMYK colored JPEG
+image.
+
+@item
+Use image statistics for flux threshold instead of absolute values,
+for example quantiles or a multiple of the average and standard
+deviation.
+
+@item
+Instead of inputing the crop box pixel positions, specify right
+ascension, declination, and angular distance of the box to specify
+part of an image.
+
+@item
+Check and make the building and installation process work on Mac and
+possibly MS-Windows systems too. I have no experience on them and
+don't have any systems running them, so I would need someone elses
+help.
+
+@end itemize
+
+
+
+
+
+
+
+
+
+
+@c Print the index and finish:
+@node Index,  , Future updates, Top
+@unnumbered Index
+@printindex cp
+
+@bye

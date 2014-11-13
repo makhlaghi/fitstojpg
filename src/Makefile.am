@@ -23,3 +23,9 @@ bin_PROGRAMS = fitstojpg
 fitstojpg_SOURCES = main.c main.h argpparser.h ui.c ui.h	\
 fitsarrayvv.c fitsarrayvv.h arr2jpg.c arr2jpg.h stats.c stats.h	\
 arraymanip.c arraymanip.h
+
+## Necessary commands for `make check`:
+TESTS = basic.sh fluxtrunc.sh borders.sh allextensions.sh crop.sh
+
+CLEANFILES = basic.jpg fluxtrunc.jpg borders.jpg mock_1.jpg	\
+mock_2.jpg mock_3.jpg crop.jpg

@@ -24,8 +24,10 @@ along with FITStoJPG. If not, see <http://www.gnu.org/licenses/>.
 #include <assert.h>
 #include <jpeglib.h>
 
+#include "config.h"
 #include "arr2jpg.h"
-#include "stats.h"
+
+#include "stats.h"		/* Needs arr2jpg.h */
 
 
 
@@ -42,7 +44,7 @@ makejsample(JSAMPLE **a, size_t s0, size_t s1, struct a2jparams *p)
 
   if(sizeof *jsarr!=1)
     {
-      printf("\n\nJSAMPLE has to be unsigned char!\n\n");
+      fprintf(stderr, PACKAGE": JSAMPLE has to be unsigned char!\n\n");
       exit(EXIT_FAILURE);
     }
 
@@ -104,8 +106,9 @@ writeJSAMPLEtoJPEG(struct a2jparams *p, JSAMPLE *a,
   jpeg_create_compress(&cinfo);
 
   if ((outfile = fopen(p->outname, "wb")) == NULL) {
-    fprintf(stderr, "can't open output file %s\n", p->outname);
-    exit(1);
+    fprintf(stderr, PACKAGE": Can't open output file %s for writing.\n",
+	    p->outname);
+    exit(EXIT_FAILURE);
   }
   jpeg_stdio_dest(&cinfo, outfile);
 
@@ -521,16 +524,14 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       doublefilljsarr(jsr, arr, s0, s1, p);
       break;
     case LONGLONG_IMG:
-      printf("\n\n%s. BITPIX=%d (long long) Not supported!\n\n",
+      fprintf(stderr, PACKAGE": %s. BITPIX=%d (long long) Not supported!\n\n",
 	     p->imgname, bitpix);
       exit(EXIT_FAILURE);
     default:
-      printf("\n\n%s. BITPIX=%d, Not recognized!\n", 
-	     p->imgname, bitpix);
-      printf("\tAcceptable values are: %d, %d, %d, %d, %d, %d\n",
-	     BYTE_IMG, SHORT_IMG, LONG_IMG, FLOAT_IMG, 
-	     DOUBLE_IMG, LONGLONG_IMG);
-      printf("\tSee the CFITSIO C programmer reference guide.\n\n");
+      fprintf(stderr, PACKAGE": %s. BITPIX=%d, Not recognized! Acceptable "
+	      "values are: %d, %d, %d, %d, %d, %d. See the CFITSIO C "
+	      "programmer reference guide.", p->imgname, bitpix, BYTE_IMG,
+	      SHORT_IMG, LONG_IMG, FLOAT_IMG, DOUBLE_IMG, LONGLONG_IMG);
       exit(EXIT_FAILURE);
     }
 

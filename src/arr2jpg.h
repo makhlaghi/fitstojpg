@@ -58,6 +58,7 @@ struct a2jparams
   int         ttrunccolor;      /* High truncation as max color.       */
   int         btrunccolor;	/* Low truncation as min color.        */
   int        convertfirst;	/* First convert then truncate.        */
+  int       removenamedir;	/* Keep the directory of the base name.*/
 
   /* Input FITS image: */
   char           *imgname;	/* Name of input.                      */

@@ -1,6 +1,16 @@
-2014-11-11 Mohammad Akhlaghi    <makhlaghi@gmail.com>
+2014-11-13 Mohammad Akhlaghi    <makhlaghi@gmail.com>
 
-	Version 0.4
+	Version 0.5 released.
+	* src/arr2jpg.h (arr2jparams): Added option to decided if the
+	directory information of the input name should be kept or removed
+	for output.
+	* src/argpparser.h (argp_option): Added the command line option
+	and decreased the volume of explanations in for each option.
+	(parse_opt): Added what to do if new option is called.
+	* src/ui.c (findnamebase): implemented the desired behaviour above
+	* doc/: Created a Texinfo documentation.
+
+	GNU coding standards files:
 	* AUTHORS: file added.
 
 	* COPYING: file added.
