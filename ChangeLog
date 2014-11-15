@@ -1,3 +1,8 @@
+2014-11-15 Mohammad Akhlaghi    <makhlaghi@gmail.com>
+
+	* doc/fitstojpg.texi: Spell cheks and info introduction.
+	* README: Removed version, corrected format.
+
 2014-11-13 Mohammad Akhlaghi    <makhlaghi@gmail.com>
 
 	Version 0.5 released.

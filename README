@@ -1,7 +1,11 @@
-FITStoJPG version 0.4
-=====================
+FITStoJPG
+=========
 
 Convert a FITS image to a grayscale or CMYK JPEG image.
+
+
+
+
 
 Description:
 ------------
@@ -24,40 +28,11 @@ can be listed as:
 * Inverts the colors by default (great for including in a document),
   can be turned off.
 
+See the manual (Chapter 1, Overview) for a complete explanation.
 
-Why CMYK?
----------
 
-The major advantage in saving in the CMYK color space is in printing.
-So if you don't want to ultimately print the image, it doesn't really
-matter that much. But if you do want to print your FITS image in a
-report or a paper, there is a big difference and we strongly recommend
-you to save the output as CMYK. Also some journals require the colors
-space of the images used to be CMYK. Most color printers use
-Cyan-Magenta-Yellow and Key (black) ink cartridges to do color
-printing. A FITS image only has one value per pixel, so it is
-essentially a greyscale image.
 
-When you send a grey scale image into a color printer, most printers
-use the combination of the three CMY colors to produce shades of
-grey. This results in a slightly blurred image due to the very small
-errors in printing each color and also in the extra use of ink. But
-when you save a FITS image only in the K channel of the CMYK color
-space, you force the printer to only use its black ink, this results
-in a sharper printed image with the shades of grey being more clear,
-you also use less ink so it is also more cost-effective! 
 
-In print the ouputs are very similar. You see that the shades of grey
-in the left image (greyscale) are slightly more darker with a higher
-contrast. Most converters of an RBG space image to a CMYK use all
-three channels in their conversion, resulting in a very large file
-size. Since RBG requires 3 bytes per pixel but CMYK requires 4! But
-when you only save in the K channel of the CMYK color space, the JPEG
-image compression algorithm, detects the fact that you have left the
-three channels empty and the resulting image approximately has the
-same volume (in bytes) as a greyscale JPEG image that only has one
-byte per pixel. Therefore your report or paper has a lower volume than
-if you want to convert to CMYK and also prints better.
 
 Requirements:
 ------------
@@ -67,13 +42,17 @@ machine, installing them is easy and straightforward.
 
 - [IJG's libjpeg](http://www.ijg.org/), which should already be
   installed  on your system.
+  
 - [cfitsio](http://heasarc.nasa.gov/fitsio/fitsio.html) For
   reading and writing FITS files. I have explained [how to install
   `cfitsio` here](http://www.astr.tohoku.ac.jp/~akhlaghi/cfitsiowcslibinstall.html)
 
 
-Installing and running:
-------------
+
+
+
+Installing:
+-----------
 
 To install FITStoJPG, after downloading or cloning it, all you have
 to do is to run the standard configuring, compiling and installing
@@ -81,19 +60,44 @@ commands in the downloaded directory (`$` as user and `#` as root):
 
     $ ./configure
     $ make
+    $ make check
     # make install
+
+See `./INSTALL` for a standard review of the GNU build and install
+methods.
+
+
+
+
+
+Commandline options:
+--------------------
 
 Command line options are used to specify how FITStoJPG operates. To
 get the full list of options and a short explanation of each, run
-`fitstojpg --help` or `fitstojpg -?`. 
+`fitstojpg --help` or `fitstojpg -?`.
 
 
-Future updates and issues:
-------------
 
-1. Add much more functionality and generality.
-2. Work on a better user experience.
-3. Fix any bugs I have not found yet!
+
+
+Manual:
+--------------
+
+The full documentation of FITStoJPG is available in various formats.
+The most readily available version is in the info format on your
+command line. Simply run
+
+    $ info fitstojpg
+
+from anywhere on your command line and the full FITStoJPG manual will
+be available to you. If you are not already familiar with how to
+navigate, run `$ info info` and you will be up and going in about half
+an hour and you will benefit in using all GNU programs, not just
+FITStoJPG.
+
+
+
 
 
 Comments and suggestions:
@@ -109,6 +113,10 @@ makhlaghi@gmail.com
 akhlaghi@astr.tohoku.ac.jp
 
 http://astr.tohoku.ac.jp/~akhlaghi/
+
+
+
+
 
 ----------------------------------------
 Copyright:
