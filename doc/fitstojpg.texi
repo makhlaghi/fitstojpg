@@ -64,7 +64,7 @@ Texts.  A copy of the license is available on
 @titlepage
 @title FITStoJPG
 @subtitle Convert a FITS image to a JPEG image.
-@subtitle for FITStoJPG version @value{VERSION}, @value{UPDATED}.
+@subtitle for @value{PACKAGE_NAME} version @value{VERSION}, @value{UPDATED}.
 @author Mohammad Akhlaghi
 @page
 @vskip 0pt plus 1filll
@@ -649,9 +649,9 @@ By examining the @file{.sh} test scripts, you can see some example of
 how FITStoJPG is best used. Note that when running the test scripts,
 you haven't installed FITStoJPG yet, that is why it is called with the
 @command{./fitstojpg}. After you install it, you don't need the
-preceding @command{fitstojpg}. To be more educative, we have also only
-used the long format of the options, when typing on the command line,
-it might be easier for you to use the short formats. Generally, when
+preceding @command{./}. To be more educative, we have also only used
+the long format of the options, when typing on the command line, it
+might be easier for you to use the short formats. Generally, when
 writing a script (that you will save for future use) it is advised to
 use the long formats of the options, because the short ones will soon
 be forgotten.
@@ -783,7 +783,7 @@ values and a short description. The default values for each option
 with a value are specified inside square brackets immediately before
 the explanation for that option, for example:
 @example
--g, --oborder=INT [0] Outer (white color) border width in pixels.
+-e, --imgext=INT           [0] FITS extension number, from 0 (zero).
 @end example
 
 @item

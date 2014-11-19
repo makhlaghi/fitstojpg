@@ -182,8 +182,8 @@ checkremoveoutimage(char *outname)
       fclose(tmpfile);
       if(unlink(outname)==-1)
 	{
-	  fprintf(stderr, "'%s' already exists and could", outname); 
-	  fprintf(stderr, " not be removed");
+	  fprintf(stderr, PACKAGE": '%s' already exists and could "
+		  "not be removed.\n", outname);
 	  exit(EXIT_FAILURE);
 	}
     }
@@ -276,7 +276,7 @@ consistencycheck(struct a2jparams *p)
   /* Check the lower and higher trunction values. */
   if(p->fluxlow>p->fluxhigh)
     {
-      fprintf(stderr, PACKAGE": Lower (%f) > higher (%f).\n\n", 
+      fprintf(stderr, PACKAGE": Lower (%f) > higher (%f).\n", 
 	      p->fluxlow, p->fluxhigh);
       exit(EXIT_FAILURE);	    
     }
@@ -326,7 +326,7 @@ makeconvstruct(char *arg)
 	{
 	  fprintf(stderr, PACKAGE": In the conversion option, [from] "
 		  "and [to] pairs should be separated by a ','. You have "
-		  "provided a '%c': %s\n\n\n", *p, arg);
+		  "provided a '%c': %s\n", *p, arg);
 	  exit(EXIT_FAILURE);
 	}
       c->next=out;

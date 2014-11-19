@@ -80,7 +80,7 @@ convertoneext(struct a2jparams *p)
 	{
 	  fprintf(stderr, PACKAGE": the cropped region (%d, %d)-(%d,%d)"
 		  "does not overlap with the image (%lu, %lu). No JPEG "
-		  "image created", p->y1+1, p->x1+1, p->y2+1, p->x2+1,
+		  "image created.\n", p->y1+1, p->x1+1, p->y2+1, p->x2+1,
 		  s1, s0);
 	  exit(EXIT_FAILURE);
 	}

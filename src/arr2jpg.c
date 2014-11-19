@@ -44,7 +44,7 @@ makejsample(JSAMPLE **a, size_t s0, size_t s1, struct a2jparams *p)
 
   if(sizeof *jsarr!=1)
     {
-      fprintf(stderr, PACKAGE": JSAMPLE has to be unsigned char!\n\n");
+      fprintf(stderr, PACKAGE": JSAMPLE has to be unsigned char!\n");
       exit(EXIT_FAILURE);
     }
 
@@ -524,13 +524,13 @@ arr2jpg(void *arr, size_t s0, size_t s1, int bitpix,
       doublefilljsarr(jsr, arr, s0, s1, p);
       break;
     case LONGLONG_IMG:
-      fprintf(stderr, PACKAGE": %s. BITPIX=%d (long long) Not supported!\n\n",
+      fprintf(stderr, PACKAGE": %s. BITPIX=%d (long long) Not supported!\n",
 	     p->imgname, bitpix);
       exit(EXIT_FAILURE);
     default:
       fprintf(stderr, PACKAGE": %s. BITPIX=%d, Not recognized! Acceptable "
 	      "values are: %d, %d, %d, %d, %d, %d. See the CFITSIO C "
-	      "programmer reference guide.", p->imgname, bitpix, BYTE_IMG,
+	      "programmer reference guide.\n", p->imgname, bitpix, BYTE_IMG,
 	      SHORT_IMG, LONG_IMG, FLOAT_IMG, DOUBLE_IMG, LONGLONG_IMG);
       exit(EXIT_FAILURE);
     }

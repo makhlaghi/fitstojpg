@@ -1,3 +1,18 @@
+2014-11-19  Mohammad Akhlaghi  <makhlaghi@gmail.com>
+
+	* src/ui.c (checkremoveoutimage): Standard error reporting.
+	(consistencycheck): Standard error reporting.
+	(makeconvstruct): Standard error reporting.
+
+	* src/main.c (convertoneext): Standard error reporting.
+
+	* src/arr2jpg.c (makejsample): Standard error reporting.
+	(arr2jpg): Standard error reporting.
+
+	* doc/fitstojpg.texi: Small corrections.
+
+	* AUTHORS: Added email address.
+
 2014-11-15 Mohammad Akhlaghi    <makhlaghi@gmail.com>
 
 	* doc/fitstojpg.texi: Spell cheks and info introduction.
