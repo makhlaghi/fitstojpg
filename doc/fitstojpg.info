@@ -454,12 +454,12 @@ the problem was.
    By examining the ‘.sh’ test scripts, you can see some example of how
 FITStoJPG is best used.  Note that when running the test scripts, you
 haven’t installed FITStoJPG yet, that is why it is called with the
-‘./fitstojpg’.  After you install it, you don’t need the preceding
-‘fitstojpg’.  To be more educative, we have also only used the long
-format of the options, when typing on the command line, it might be
-easier for you to use the short formats.  Generally, when writing a
-script (that you will save for future use) it is advised to use the long
-formats of the options, because the short ones will soon be forgotten.
+‘./fitstojpg’.  After you install it, you don’t need the preceding ‘./’.
+To be more educative, we have also only used the long format of the
+options, when typing on the command line, it might be easier for you to
+use the short formats.  Generally, when writing a script (that you will
+save for future use) it is advised to use the long formats of the
+options, because the short ones will soon be forgotten.
 
    The tests will be increased in time to include all the capabilities
 of FITStoJPG. So if the tests pass, you can safely install the FITStoJPG
@@ -557,7 +557,7 @@ most GNU/Linux programs, not just FITStoJPG.
      short description.  The default values for each option with a value
      are specified inside square brackets immediately before the
      explanation for that option, for example:
-          -g, --oborder=INT [0] Outer (white color) border width in pixels.
+          -e, --imgext=INT           [0] FITS extension number, from 0 (zero).
 
    • If you know the values you want to supply but forgot the exact
      short option characters or long option name, you can run ‘$
@@ -986,15 +986,15 @@ Node: Installing FITStoJPG13793
 Node: Default parameters15791
 Node: Configuring17414
 Node: Tests18632
-Node: Print manual20449
-Node: Running21760
-Node: Getting help23137
-Node: Command line options25583
-Node: Input FITS image28063
-Node: Output JPEG image30476
-Node: Operating modes32244
-Node: Future updates34435
-Node: Index35942
+Node: Print manual20441
+Node: Running21752
+Node: Getting help23129
+Node: Command line options25578
+Node: Input FITS image28058
+Node: Output JPEG image30471
+Node: Operating modes32239
+Node: Future updates34430
+Node: Index35937
 
 End Tag Table
 

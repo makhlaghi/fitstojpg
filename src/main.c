@@ -75,13 +75,14 @@ convertoneext(struct a2jparams *p)
   checkremoveoutimage(p->outname);   /* ui.c */
   if(p->x1!=p->x2 && p->y1!=p->y2)
     {
+      checkifinarray(&p->x1, &p->y1, &p->x2, &p->y2, s0, s1);
       shrinkarray(&arr, bitpix, s0, s1, p->x1, p->y1, p->x2, p->y2);
       if(arr==NULL) /* If the region is out of the image */
 	{
-	  fprintf(stderr, PACKAGE": the cropped region (%d, %d)-(%d,%d)"
-		  "does not overlap with the image (%lu, %lu). No JPEG "
-		  "image created.\n", p->y1+1, p->x1+1, p->y2+1, p->x2+1,
-		  s1, s0);
+	  fprintf(stderr, PACKAGE": the cropped region (%d, %d) - (%d, %d)"
+		  "does not overlap with the image of size (%lu, %lu). No "
+		  "JPEG image created.\n", p->y1+1, p->x1+1, p->y2+1,
+		  p->x2+1, s1, s0);
 	  exit(EXIT_FAILURE);
 	}
       s0=p->x2-p->x1;

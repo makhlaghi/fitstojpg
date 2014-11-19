@@ -36,7 +36,7 @@ void
 checkifinarray(int *x1, int *y1, int *x2, int *y2, int s0, int s1)
 {
   int temp;
-  if(*x1==*x2 && *y1==*y2) return;        
+  if(*x1==*x2 && *y1==*y2) return;
 
   if(*x2<*x1){temp=*x1;*x1=*x2;*x2=temp;} 
   if(*y2<*y1){temp=*y1;*y1=*y2;*y2=temp;}
@@ -65,7 +65,6 @@ ucharshrinkarray(unsigned char **in, int size1, int size2,
   size_t i, ux1, uy1, us2, w1, w2;
   unsigned char *ifpt, *ofpt, *rowstart;
 
-  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
   if(x1==x2 || y1==y2) 		/* The required region does not */
     {				/* overlap with the array. */
       free(*in);
@@ -104,7 +103,6 @@ shortshrinkarray(short **in, int size1, int size2,
   short *ifpt, *ofpt, *rowstart;
   size_t i, ux1, uy1, us2, w1, w2;
 
-  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
   if(x1==x2 || y1==y2) 		/* The required region does not */
     {				/* overlap with the array. */
       free(*in);
@@ -143,7 +141,6 @@ longshrinkarray(long **in, int size1, int size2,
   long *ifpt, *ofpt, *rowstart;
   size_t i, ux1, uy1, us2, w1, w2;
 
-  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
   if(x1==x2 || y1==y2) 		/* The required region does not */
     {				/* overlap with the array. */
       free(*in);
@@ -182,7 +179,6 @@ floatshrinkarray(float **in, int size1, int size2,
   float *ifpt, *ofpt, *rowstart;
   size_t i, ux1, uy1, us2, w1, w2;
 
-  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
   if(x1==x2 || y1==y2) 		/* The required region does not */
     {				/* overlap with the array. */
       free(*in);
@@ -221,7 +217,6 @@ doubleshrinkarray(double **in, int size1, int size2,
   double *ifpt, *ofpt, *rowstart;
   size_t i, ux1, uy1, us2, w1, w2;
 
-  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
   if(x1==x2 || y1==y2) 		/* The required region does not */
     {				/* overlap with the array. */
       free(*in);

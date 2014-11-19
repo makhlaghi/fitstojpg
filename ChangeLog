@@ -1,5 +1,16 @@
 2014-11-19  Mohammad Akhlaghi  <makhlaghi@gmail.com>
 
+	* src/arraymanip.c (doubleshrinkarray): Removed checkifinarray().
+	(floatshrinkarray): Same as above.
+	(longshrinkarray): Same as above.
+	(shortshrinkarray): Same as above.
+	(ucharshrinkarray): Same as above.
+
+	* src/arraymanip.h: Added definition of checkifinarray().
+
+	* src/main.c (convertoneext): Wording of error corrected.
+	(convertoneext): Brought checkifinarray() here.
+
 	* src/ui.c (checkremoveoutimage): Standard error reporting.
 	(consistencycheck): Standard error reporting.
 	(makeconvstruct): Standard error reporting.
@@ -16,6 +27,7 @@
 2014-11-15 Mohammad Akhlaghi    <makhlaghi@gmail.com>
 
 	* doc/fitstojpg.texi: Spell cheks and info introduction.
+
 	* README: Removed version, corrected format.
 
 2014-11-13 Mohammad Akhlaghi    <makhlaghi@gmail.com>
@@ -24,10 +36,13 @@
 	* src/arr2jpg.h (arr2jparams): Added option to decided if the
 	directory information of the input name should be kept or removed
 	for output.
+
 	* src/argpparser.h (argp_option): Added the command line option
 	and decreased the volume of explanations in for each option.
 	(parse_opt): Added what to do if new option is called.
-	* src/ui.c (findnamebase): implemented the desired behaviour above
+
+	* src/ui.c (findnamebase): implemented the desired behaviour above.
+
 	* doc/: Created a Texinfo documentation.
 
 	GNU coding standards files:

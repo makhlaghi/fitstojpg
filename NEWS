@@ -1,6 +1,14 @@
 FITStoJPG NEWS                                    -*- outline -*-
 
-* Noteworthy changes in release 0.4 (2014-11-8) [stable]
+* Noteworthy changes on (2014-11-19)
+
+** Bug fixes 
+
+   When the the crop box was out of the image, the array would be
+   correctly preprated, but the output image would not, resulting in a
+   segmentation fault. I fixed this today.
+
+* Noteworthy changes in release 0.5 (2014-11-13) [stable]
 
 ** Bug fixes
 

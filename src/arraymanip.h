@@ -22,6 +22,9 @@ along with FITStoJPG. If not, see <http://www.gnu.org/licenses/>.
 #define ARRAYMANIP_H
 
 void
+checkifinarray(int *x1, int *y1, int *x2, int *y2, int s0, int s1);
+
+void
 shrinkarray(void **in, int bitpix, int size1, int size2,
 	    int x1, int y1, int x2, int y2);
 
