@@ -1,6 +1,14 @@
 FITStoJPG
 =========
 
+FITStoJPG is discontinued. Its core algorithms are now implemented in 
+ConvertType and the other tools in GNU Astronomy Utilities:
+
+https://www.gnu.org/software/gnuastro/
+
+Please visit there for a much better user experience and more accurate
+programs.
+
 Convert a FITS image to a grayscale or CMYK JPEG image.
 
 
